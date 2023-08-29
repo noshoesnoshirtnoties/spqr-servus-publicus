@@ -284,7 +284,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
           logmsg(logfile,'warn','missing parameters')
           response='missing parameters - use !help for more info'
       case '!writeas':
-        if len(user_message_split)>3: # requires 2 params
+        if len(user_message_split)>=3: # requires 2 params
           wa_user_message_split0=user_message.split(' ',3)
           wa_command=wa_user_message_split0[0]
           wa_channel=wa_user_message_split0[1]
