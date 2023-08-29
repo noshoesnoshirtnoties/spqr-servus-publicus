@@ -71,8 +71,8 @@ async def rcon(config,logfile,rconcmd,rconparams):
   logmsg(logfile,'debug','rconcmd: '+str(rconcmd))
   logmsg(logfile,'debug','rconparams: '+str(rconparams))
   conn=PavlovRCON(config['rconip'],config['rconport'],config['rconpass'])
-  for key,value in rconparams.items():
-    rconcmd=rconcmd+' '+value
+  for rconparam in rconparams:
+    rconcmd+=' '+value
   data=await conn.send(rconcmd)
   data_json=json.dumps(data)
   data=json.loads(data_json)
@@ -93,6 +93,7 @@ def get_rconparams(user_message):
   return rconparams
 
 async def get_response(config,logfile,client,message,user_message,is_private):
+  response=''
   logmsg(logfile,'debug','client: '+str(client))
   logmsg(logfile,'info','message: '+str(message))
   logmsg(logfile,'debug','type(message): '+str(type(message)))
