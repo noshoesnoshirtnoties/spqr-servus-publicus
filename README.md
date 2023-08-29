@@ -25,3 +25,4 @@ general purpose bot for the spqr discord server
   * !updateaccessrights to allow senate members to update the access rights for certain commands
 * create logrotate config for the log file
 * remove requirement to access the server as root (deploy.sh)
+* add discord-ui-features (buttons) to trigger commands
