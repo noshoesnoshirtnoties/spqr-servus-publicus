@@ -1,0 +1,34 @@
+**SPQR Servus Publicus Help**
+```
+!help                   outputs this message
+
+!roles                  outputs spqr roles info
+!reqs                   outputs gladiator requirements
+!rules                  outputs gladiator rules
+!invite                 outputs invite message
+
+!spqr                   outputs spqr translation
+!loremipsum             outputs lorem ipsum
+!suntzu                 outputs random sun tzu quote
+!echo <in>              outputs the input
+
+!serverinfo             rcon: outputs server info
+!maplist                rcon: ouputs the current maplist
+
+!getstats               db: outputs stats for current discord user
+!getrank                db: outputs rank for current discord user
+!register <steamid64>   db: register current discord user with given steamid64
+
+### Praefectus only
+!resetsnd               rcon: reset snd on server
+!rotatemap              rcon: rotate map on server
+!setrandommap           rcon: set random snd map on server
+!setmap <mapugc> <mode> rcon: set specific map and gamemode on server
+!kick <steamid64>       rcon: kick player with given steamid64
+!ban <steamid64>        rcon: ban player with given steamid64
+!unban <steamid64>      rcon: unban player with given steamid64
+
+### Senate only
+!writeas <chn> <in>     outputs the input to a given channel
+!unregister <steamid64> db: unregisters given steamid64
+```

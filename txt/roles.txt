@@ -1,0 +1,15 @@
+**Roles Info**
+```
+> white    SPQR Decurion     no access to the gladiator channels
+> grey     SPQR Amicus       read-only access to the gladiator channels
+> teal     SPQR Tiro         temporary access to the gladiator channels
+> blue     SPQR Gladiator    regular access to the gladiator channels
+> green    SPQR Praefectus   mod capabilities for the gladiator channels
+> purple   SPQR Praetorian   (unused)
+> red      SPQR Legion       (unused)
+> orange   SPQR Senate       server-wide admin capabilities
+> orange   SPQR Architecti   discord bot admins
+> orange   SPQR Admin        discord server admin
+> yellow   SPQR Centurion    discord server owner
+> yellow   SPQR Emperor      discord bots
+```

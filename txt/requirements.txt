@@ -1,0 +1,7 @@
+**SPQR Gladiator Requirements:**
+```
+- english-speaking
+- adults only (be nice and act responsibly)
+- a certain amount of skill (to enable teamplay)
+- decent internet connection to EU servers is required (50ms ping soft limit, 60ms ping hard limit, normal stability)
+```

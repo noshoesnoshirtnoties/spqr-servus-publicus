@@ -1,0 +1,42 @@
+{
+  "live": {
+    "debug":true,
+    "bot_token":"abcdefghijklmnopqrstuvwxyz",
+    "rconip":"1.2.3.4.",
+    "rconport":9100,
+    "rconpass":"supersecretrconpassword",
+    "praefectus-cmds":[
+      "!resetsnd",
+      "!rotatemap",
+      "!setmap",
+      "!setrandommap",
+      "!kick",
+      "!ban",
+      "!unban"
+    ],
+    "senate-cmds":[
+      "!writeas",
+      "!unregister"
+    ],
+    "architecti-cmds":[
+      ""
+    ],
+    "praefectus-member":[
+      "1234678901234567890"
+    ],
+    "senate-member":[
+      "1234678901234567890"
+    ],
+    "architecti-member":[
+      "1234678901234567890"
+    ],
+    "bot-channel-ids":{
+      "name-of-my-fancy-channel":"1234678901234567890"
+    },
+    "mysqlhost":"1.2.3.4",
+    "mysqlport":3306,
+    "mysqldatabase":"mysqldatabase",
+    "mysqluser":"mysqluserr",
+    "mysqlpass":"supersecretmysqlpassword"
+  }
+}
