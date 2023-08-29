@@ -72,7 +72,7 @@ async def rcon(config,logfile,rconcmd,rconparams):
   logmsg(logfile,'debug','rconparams: '+str(rconparams))
   conn=PavlovRCON(config['rconip'],config['rconport'],config['rconpass'])
   for rconparam in rconparams:
-    rconcmd+=' '+value
+    rconcmd+=' '+str(rconparam)
   data=await conn.send(rconcmd)
   data_json=json.dumps(data)
   data=json.loads(data_json)

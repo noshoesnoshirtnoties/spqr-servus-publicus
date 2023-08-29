@@ -41,7 +41,7 @@ def run_bot():
     level=logging.DEBUG
   else:
     level=logging.INFO
-  logging.basicConfig(filename='spqr-servus-publicus.log',filemode='a',format='%(asctime)s,%(msecs)d [%(levelname)s] srvmon: %(message)s',datefmt='%m/%d/%Y %H:%M:%S',level=level)
+  logging.basicConfig(filename='spqr-servus-publicus.log',filemode='a',format='%(asctime)s,%(msecs)d [%(levelname)s] %(message)s',datefmt='%m/%d/%Y %H:%M:%S',level=level)
   logfile=logging.getLogger('logfile')
 
   intents=discord.Intents.default()
