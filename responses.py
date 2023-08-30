@@ -269,16 +269,16 @@ async def get_responses(config,logfile,client,message,user_message,is_private):
             case '!resetsnd':
                 data=await rcon('ResetSND',{})
                 if data['Successful'] is True:
-                    responses[0]=user_message+' responses: rcon: success'
+                    responses[0]=user_message+' successful'
                 else:
-                    responses[0]=user_message+' responses: rcon: something went wrong'
+                    responses[0]=user_message+' something went wrong'
 
             case '!rotatemap':
                 data=await rcon('RotateMap',{})
                 if data['Successful'] is True:
-                    responses[0]=user_message+' responses: rcon: success'
+                    responses[0]=user_message+' successful'
                 else:
-                    responses[0]=user_message+' responses: rcon: something went wrong'
+                    responses[0]=user_message+' something went wrong'
 
             case '!setmap':
                 rconparams={}
@@ -287,10 +287,10 @@ async def get_responses(config,logfile,client,message,user_message,is_private):
                     responses[0]='SwitchMap is missing parameters'
                 else:
                     data=await rcon('SwitchMap',rconparams)
-                    if data['Successful']==True:
-                        responses[0]=user_message+' responses: rcon: success'
+                    if data['Successful'] is True:
+                        responses[0]=user_message+' successful'
                     else:
-                        responses[0]=user_message+' responses: rcon: something went wrong'
+                        responses[0]=user_message+' something went wrong'
 
             case '!setrandommap':
                 maplist_data=await rcon('MapList',{})
@@ -310,9 +310,9 @@ async def get_responses(config,logfile,client,message,user_message,is_private):
                 rconparams[1]=gamemode
                 data=await rcon(rconcmd,rconparams)
                 if data['Successful'] is True:
-                    responses[0]=user_message+' responses: rcon: success'
+                    responses[0]=user_message+' successful'
                 else:
-                    responses[0]=user_message+' responses: rcon: something went wrong'
+                    responses[0]=user_message+' something went wrong'
 
             case '!kick':
                 rconparams={}
@@ -322,9 +322,9 @@ async def get_responses(config,logfile,client,message,user_message,is_private):
                 else:
                     data=await rcon('Kick',{rconparams[0]})
                     if data['Successful'] is True:
-                        responses[0]=user_message+' responses: rcon: success'
+                        responses[0]=user_message+' successful'
                     else:
-                        responses[0]=user_message+' responses: rcon: something went wrong'
+                        responses[0]=user_message+' something went wrong'
 
             case '!ban':
                 rconparams={}
@@ -334,9 +334,9 @@ async def get_responses(config,logfile,client,message,user_message,is_private):
                 else:
                     data=await rcon('Ban',{rconparams[0]})
                     if data['Successful'] is True:
-                        responses[0]=user_message+' responses: rcon: success'
+                        responses[0]=user_message+' successful'
                     else:
-                        responses[0]=user_message+' responses: rcon: something went wrong'
+                        responses[0]=user_message+' something went wrong'
 
             case '!unban':
                 rconparams={}
@@ -346,9 +346,9 @@ async def get_responses(config,logfile,client,message,user_message,is_private):
                 else:
                     data=await rcon('Unban',{rconparams[0]})
                     if data['Successful'] is True:
-                        responses[0]=user_message+' responses: rcon: success'
+                        responses[0]=user_message+' successful'
                     else:
-                        responses[0]=user_message+' responses: rcon: something went wrong'
+                        responses[0]=user_message+' something went wrong'
 
             case '!echo':
                 if paramsgiven: # requires 1 param
@@ -399,12 +399,14 @@ async def get_responses(config,logfile,client,message,user_message,is_private):
                     steamid64=db_param
                     discordid=message.author.id
 
+                    # check if steamuser exists
+                    logmsg(logfile,'debug','checking if steamid64 exists in steamuser db')
                     query="SELECT id FROM steamusers WHERE steamid64 = %s LIMIT 1"
                     values=[]
                     values.append(steamid64)
                     data=dbquery(query,values)
 
-                    logmsg(logfile,'debug','checking if steamid64 exists in steamuser db')
+                    # add steamuser if it does not exist
                     if data['rowcount']==0:
                         logmsg(logfile,'debug','steamid64 not found in steamusers db')
                         query="INSERT INTO steamusers (steamid64) VALUES (%s)"
@@ -414,18 +416,22 @@ async def get_responses(config,logfile,client,message,user_message,is_private):
                         logmsg(logfile,'info','created entry in steamusers db for steamid64 '+str(steamid64))
                     else:
                         logmsg(logfile,'debug','steamid64 already exists in steamusers db')
+                    
+                    # get the steamuser id
                     query="SELECT id FROM steamusers WHERE steamid64=%s LIMIT 1"
                     values=[]
                     values.append(steamid64)
                     data=dbquery(query,values)
                     steamusers_id=data['rows'][0][0]
                     
+                    # get discorduser id
+                    logmsg(logfile,'debug','checking if discordid exists in discordusers db')
                     query="SELECT id FROM discordusers WHERE discordid = %s LIMIT 1"
                     values=[]
                     values.append(discordid)
                     data=dbquery(query,values)
 
-                    logmsg(logfile,'debug','checking if discordid exists in discordusers db')
+                    # add discorduser if it does not exist
                     if data['rowcount']==0:
                         logmsg(logfile,'debug','discordid not found in discordusers db')
                         query="INSERT INTO discordusers (discordid) VALUES (%s)"
@@ -436,31 +442,47 @@ async def get_responses(config,logfile,client,message,user_message,is_private):
                     else:
                         logmsg(logfile,'debug','discordid already exists in discordusers db')
 
+                    # get discorduser id
                     query="SELECT id FROM discordusers WHERE discordid=%s LIMIT 1"
                     values=[]
                     values.append(discordid)
                     data=dbquery(query,values)
                     discordusers_id=data['rows'][0][0]
 
+                    # check if steamuser and discorduser are already registered
+                    logmsg(logfile,'debug','checking if entry in register db exists')
                     query="SELECT id FROM register WHERE steamusers_id = %s AND discordusers_id = %s LIMIT 1"
                     values=[]
                     values.append(steamusers_id)
                     values.append(discordusers_id)
                     data=dbquery(query,values)
 
-                    logmsg(logfile,'debug','checking if entry in register db exists')
+                    # check if discorduser is registered with another steamuser
                     if data['rowcount']==0:
-                        logmsg(logfile,'debug','not entry found in register db')
-                        query="INSERT INTO register (steamusers_id,discordusers_id) VALUES (%s,%s)"
+                        logmsg(logfile,'debug','checking if discorduser is known with another steamuser')
+                        query="SELECT id FROM register WHERE NOT steamusers_id = %s AND discordusers_id = %s LIMIT 1"
                         values=[]
                         values.append(steamusers_id)
                         values.append(discordusers_id)
                         data=dbquery(query,values)
-                        logmsg(logfile,'info','registered steamid64 '+str(steamid64)+' with discordid ('+str(discordid)+')')
-                        responses[0]='registered steamid64 ('+str(steamid64)+') with discordid ('+str(discordid)+')'
+
+                        # add new entry in register if user is not registered yet
+                        if data['rowcount']==0:
+                            logmsg(logfile,'debug','not entry found in register db')
+                            query="INSERT INTO register (steamusers_id,discordusers_id) VALUES (%s,%s)"
+                            values=[]
+                            values.append(steamusers_id)
+                            values.append(discordusers_id)
+                            data=dbquery(query,values)
+                            logmsg(logfile,'info','registered steamid64 '+str(steamid64)+' with discordid ('+str(discordid)+')')
+                            responses[0]='registered steamid64 ('+str(steamid64)+') with discordid ('+str(discordid)+')'
+                        else:
+                            register_id=data['rows'][0][0]
+                            logmsg(logfile,'warn','entry found in register db discordusers_id ('+str(discordusers_id)+') with id ('+str(register_id)+'), but with a different steamid64')
+                            responses[0]='already registered discordusers_id ('+str(discordusers_id)+') as id ('+str(register_id)+'), but with a different steamid64'
                     else:
                         register_id=data['rows'][0][0]
-                        logmsg(logfile,'debug','entry found in register db for steamusers_id ('+str(steamusers_id)+') and discordusers_id ('+str(discordusers_id)+') with id ('+str(register_id)+')')
+                        logmsg(logfile,'warn','entry found in register db for steamusers_id ('+str(steamusers_id)+') and discordusers_id ('+str(discordusers_id)+') with id ('+str(register_id)+')')
                         responses[0]='already registered steamusers_id ('+str(steamusers_id)+') with discordusers_id ('+str(discordusers_id)+') as id ('+str(register_id)+')'
                 else:
                     logmsg(logfile,'warn','missing parameters')
@@ -486,7 +508,8 @@ async def get_responses(config,logfile,client,message,user_message,is_private):
                     data=dbquery(query,values)
                     steamusers_id=data['rows'][0][0]
                     query="SELECT kills,deaths,average,score FROM stats "
-                    query+="WHERE matchended IS TRUE AND (gamemode='SND' OR gamemode='snd') AND playercount>9 AND steamusers_id=%s "
+                    query+="WHERE gamemode='SND' AND steamusers_id=%s "
+                    #query+="WHERE gamemode='SND' AND matchended IS TRUE AND playercount>9 AND steamusers_id=%s "
                     query+="ORDER BY timestamp ASC"
                     values=[]
                     values.append(steamusers_id)
