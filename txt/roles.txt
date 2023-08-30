@@ -10,6 +10,6 @@
 > orange   SPQR Senate       server-wide admin capabilities
 > orange   SPQR Architecti   discord bot admins
 > orange   SPQR Admin        discord server admin
-> yellow   SPQR Centurion    discord server owner
+> yellow   SPQR Centurion    discord server owner (doesnt talk)
 > yellow   SPQR Emperor      discord bots
 ```
