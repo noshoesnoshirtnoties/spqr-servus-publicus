@@ -30,5 +30,5 @@
 
 ### Senate only
 !writeas <chn> <in>     outputs the input to a given channel
-!unregister <steamid64> db: unregisters given steamid64
+!unregister <dscrdid>   db: unregisters given discordid
 ```

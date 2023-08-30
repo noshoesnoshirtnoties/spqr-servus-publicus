@@ -35,17 +35,16 @@ def run_bot(meta,config):
 
     async def send_answer(client,message,user_message,is_private):
         logmsg(logfile,'debug','send_answer called')
-        resps=await responses.get_responses(config,logfile,client,message,user_message,is_private)
-        if int(len(resps))<1:
-            logmsg(logfile,'debug','nothing to do - responses was found empty')
+        resp=await responses.get_response(config,logfile,client,message,user_message,is_private)
+        if int(len(resp))<1:
+            logmsg(logfile,'debug','nothing to do - response was found empty')
         else:
-            logmsg(logfile,'debug','sending responses')
-            for i, resp in resps.items():
-                logmsg(logfile,'debug','resp: '+str(resp))
-                try:
-                    await message.author.send(resp) if is_private else await message.channel.send(resp)
-                except Exception as e:
-                    logmsg(logfile,'debug',str(e))
+            logmsg(logfile,'debug','sending response')
+            logmsg(logfile,'debug','resp: '+str(resp))
+            try:
+                await message.author.send(resp) if is_private else await message.channel.send(resp)
+            except Exception as e:
+                logmsg(logfile,'debug',str(e))
 
     @client.event
     async def on_ready():

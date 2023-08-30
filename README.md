@@ -17,8 +17,7 @@ general purpose bot for the spqr discord server
   * mysql-connector
 
 ## todo (aside from finding and fixing bugs)
-* parse rcon response data for !serverinfo, !maplist
-* !getstats, !getrank, !unregister
+* !getrank
 * allow map aliases for !setmap
 * auto-message new discord users
 * pull user access rights from specific discord messages (instead of a config file)
