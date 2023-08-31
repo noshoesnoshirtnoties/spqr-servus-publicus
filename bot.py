@@ -61,11 +61,12 @@ def run_bot(meta,config):
         #logmsg(logfile,'debug',str(username)+' said: "'+str(user_message)+'" in channel: '+str(channel))
         #logmsg(logfile,'debug','type(user_message): "'+str(type(user_message)))
 
-        if user_message[0]=='?':
-            user_message=user_message[1:]
-            is_private=True
-        else:
-            is_private=False
+        is_private=False
+        if len(user_message)>0:
+            if user_message[0]=='?':
+                user_message=user_message[1:]
+                is_private=True
+            
         await send_answer(client,message,user_message,is_private)
 
     client.run(config['bot_token'])
