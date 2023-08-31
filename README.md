@@ -19,8 +19,10 @@ general purpose bot for the spqr discord server
 ## todo (aside from finding and fixing bugs)
 * allow map aliases for !setmap
 * auto-message new discord users
-* pull user access rights from specific discord messages (instead of a config file)
-  * !updateaccessrights to allow senate members to update the access rights for certain commands
+* pull user access rights from roles
+  * alternatively: pull them from specific discord messages
+* pull bot-channel-ids from discord directly
+  * alternatively: pull them from a specific discord message
 * create logrotate config for the log file
 * remove requirement to access the server as root (deploy.sh)
 * add discord-ui-features (buttons) to trigger commands
