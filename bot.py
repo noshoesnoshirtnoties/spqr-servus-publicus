@@ -58,8 +58,8 @@ def run_bot(meta,config):
         username=str(message.author)
         user_message=str(message.content)
         channel=str(message.channel)
-        logmsg(logfile,'debug',str(username)+' said: "'+str(user_message)+'" in channel: '+str(channel))
-        logmsg(logfile,'debug','type(user_message): "'+str(type(user_message)))
+        #logmsg(logfile,'debug',str(username)+' said: "'+str(user_message)+'" in channel: '+str(channel))
+        #logmsg(logfile,'debug','type(user_message): "'+str(type(user_message)))
 
         if user_message[0]=='?':
             user_message=user_message[1:]

@@ -26,7 +26,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                 logfile.debug(msg)
 
     logmsg(logfile,'debug','client: '+str(client))
-    logmsg(logfile,'info','message: '+str(message))
+    #logmsg(logfile,'debug','message: '+str(message))
     logmsg(logfile,'debug','type(message): '+str(type(message)))
     logmsg(logfile,'info','message.id: '+str(message.id))
     logmsg(logfile,'info','message.channel: '+str(message.channel))
@@ -41,7 +41,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
         logmsg(logfile,'debug','message.guild.name: '+str(message.guild.name))
     else:
         logmsg(logfile,'debug','message.guild: '+str(message.guild))
-    logmsg(logfile,'info','user_message: '+str(user_message))
+    #logmsg(logfile,'debug','user_message: '+str(user_message))
     logmsg(logfile,'debug','is_private: '+str(is_private))
 
     def dbquery(query,values):
@@ -154,7 +154,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
     paramsgiven=False
     user_message_split=user_message.split(' ',2)
     command=user_message_split[0]
-    logmsg(logfile,'info','command: '+str(command))
+    #logmsg(logfile,'debug','command: '+str(command))
     paramsgiven=False
     if len(user_message_split)>1:
         logmsg(logfile,'debug','params have been given')
