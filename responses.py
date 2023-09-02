@@ -582,10 +582,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                     else:
                         parts=[
                             user_message+': successful\n'
-                            '',
-                            'VERY MUCH WIP',
-                            '',
-                            'Number of entries found for player '+str(steamusers_steamid64)+': '+str(all_stats['rowcount']),
+                            'Entries found for player '+str(steamusers_steamid64)+' (steamid64): '+str(all_stats['rowcount']),
                             'AVG Score: '+str(stats['rows'][0]['avg_score']),
                             'AVG KDR: '+str(stats['rows'][0]['avg_average']),
                             'AVG Kills: '+str(stats['rows'][0]['avg_kills']),
