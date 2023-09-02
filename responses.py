@@ -254,7 +254,18 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                     response=user_message+': successful'
 
                     for part in maplist['MapList']:
-                        response=response+'\n'+part['MapId']+' as '+part['GameMode']
+                        response=response+'\n'+str(part['MapId'])+' as '+str(part['GameMode'])
+                else:
+                    response=user_message+': something went wrong'
+
+            case '!playerlist':
+                inspectall=await rcon('InspectAll',{})
+                if inspectall['Successful'] is True:
+                    logmsg(logfile,'debug','!inspectall successful')
+                    response=user_message+': successful'
+
+                    for player in inspectall['InspectList']:
+                        response=response+'\n'+str(player['PlayerName'])+' ('+str(player['UniqueId'])+')'
                 else:
                     response=user_message+': something went wrong'
 
@@ -296,9 +307,10 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                 randommap=random.choice(poolofrandommaps)
                 gamemode='SND'
                 rconcmd='SwitchMap'
-                rconparams={}
-                rconparams[0]=randommap
-                rconparams[1]=gamemode
+                rconparams={randommap,gamemode}
+                #rconparam={}
+                #rconparams[0]=randommap
+                #rconparams[1]=gamemode
                 switchmap=await rcon(rconcmd,rconparams)
                 if switchmap['Successful'] is True:
                     response=user_message+' successful'

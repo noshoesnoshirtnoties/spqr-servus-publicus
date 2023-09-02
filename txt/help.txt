@@ -14,6 +14,7 @@
 
 !serverinfo             rcon: outputs server info
 !maplist                rcon: ouputs the current maplist
+!playerlist             rcon: outputs the current players
 
 !getstats               db: outputs stats for current discord user
 !getrank                db: outputs rank for current discord user
