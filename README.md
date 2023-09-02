@@ -24,5 +24,6 @@ general purpose bot for the spqr discord server
 * pull bot-channel-ids from discord directly
   * alternatively: pull them from a specific discord message
 * create logrotate config for the log file
+* make env (main.py) a param
 * remove requirement to access the server as root (deploy.sh)
 * add discord-ui-features (buttons) to trigger commands
