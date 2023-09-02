@@ -131,7 +131,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
             numberofplayers=serverinfo['PlayerCount']
         serverinfo['PlayerCount']=numberofplayers
 
-        # for SND get info if match has ended and which team won if there were teams
+        # for SND get info if match has ended and which team won
         serverinfo['MatchEnded']=False
         serverinfo['WinningTeam']='none'
         if serverinfo['GameMode']=="SND" and serverinfo['Teams'] is True:
@@ -308,9 +308,6 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                 gamemode='SND'
                 rconcmd='SwitchMap'
                 rconparams={randommap,gamemode}
-                #rconparam={}
-                #rconparams[0]=randommap
-                #rconparams[1]=gamemode
                 switchmap=await rcon(rconcmd,rconparams)
                 if switchmap['Successful'] is True:
                     response=user_message+' successful'
@@ -469,7 +466,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                         values.append(discordusers_id)
                         register=dbquery(query,values)
 
-                        # if discorduser is not registered with a different steamid64, add new entry in register 
+                        # if discorduser is not registered with a different steamid64, add new entry in register
                         if register['rowcount']==0:
                             logmsg(logfile,'debug','not entry found in register db')
                             query="INSERT INTO register (steamusers_id,discordusers_id) VALUES (%s,%s)"
@@ -622,125 +619,23 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                     register=dbquery(query,values)
                     steamusers_id=register['rows'][0][0]
 
-                    # get stats for steamuser from stats db
-                    query="SELECT kills,deaths,average,score,ping"
-                    query+=",AVG(kills) as avg_kills,AVG(deaths) as avg_deaths,AVG(average) as avg_average,AVG(score) as avg_score,AVG(ping) as avg_ping"
-                    query+=",MIN(kills) as min_kills,MIN(deaths) as min_deaths,MIN(average) as min_average,MIN(score) as min_score,MIN(ping) as min_ping"
-                    query+=",MAX(kills) as max_kills,MAX(deaths) as max_deaths,MAX(average) as max_average,MAX(score) as max_score,MAX(ping) as max_ping"
-                    query+=" FROM stats WHERE gamemode='SND' AND steamusers_id=%s "
-                    #query+="AND matchended IS TRUE AND playercount>9 "
-                    query+="ORDER BY timestamp ASC"
+                    # get rank for steamuser from ranks db
+                    query="SELECT rank,title FROM ranks WHERE steamusers_id=%s LIMIT 1"
                     values=[]
                     values.append(steamusers_id)
-                    player_stats=dbquery(query,values)
-                    logmsg(logfile,'debug','player_stats: '+str(player_stats))
+                    ranks=dbquery(query,values)
 
-                    query="SELECT id FROM stats WHERE gamemode='SND' AND steamusers_id=%s "
-                    #query+="AND matchended IS TRUE AND playercount>9 "
-                    query+="ORDER BY timestamp ASC"
-                    values=[]
-                    values.append(steamusers_id)
-                    player_all_stats=dbquery(query,values)
-
-                    limit_stats=2
-                    if player_all_stats['rowcount']<limit_stats:
-                        # not enough stats
-                        logmsg(logfile,'info','not enough data to generate stats ('+str(player_all_stats['rowcount'])+')')
-                        response='not enough data to generate stats ('+str(player_all_stats['rowcount'])+')'
+                    if ranks['rowcount']==0:
+                        # no rank found
+                        logmsg(logfile,'warn','no rank found')
+                        response='no rank found - maybe because there are not enough stats to generate them - use !getstats to show your stats'
                     else:
-                        # get stats for all users from stats db
-                        query="SELECT kills,deaths,average,score,ping"
-                        query+=",AVG(kills) as avg_kills,AVG(deaths) as avg_deaths,AVG(average) as avg_average,AVG(score) as avg_score,AVG(ping) as avg_ping"
-                        query+=",MIN(kills) as min_kills,MIN(deaths) as min_deaths,MIN(average) as min_average,MIN(score) as min_score,MIN(ping) as min_ping"
-                        query+=",MAX(kills) as max_kills,MAX(deaths) as max_deaths,MAX(average) as max_average,MAX(score) as max_score,MAX(ping) as max_ping"
-                        query+=" FROM stats WHERE gamemode='SND' "
-                        #query+="AND matchended IS TRUE AND playercount>9 "
-                        query+="ORDER BY timestamp ASC"
-                        values=[]
-                        all_stats=dbquery(query,values)
-                        logmsg(logfile,'debug','all_stats: '+str(all_stats))
-
-                        player_avg_score=player_stats['rows'][0][8]
-                        player_avg_average=player_stats['rows'][0][7]
-                        player_avg_kills=player_stats['rows'][0][5]
-                        player_avg_deaths=player_stats['rows'][0][6]
-                        player_avg_ping=player_stats['rows'][0][9]
-
-                        player_min_score=player_stats['rows'][0][13]
-                        player_min_average=player_stats['rows'][0][12]
-                        player_min_kills=player_stats['rows'][0][10]
-                        player_min_deaths=player_stats['rows'][0][11]
-                        player_min_ping=player_stats['rows'][0][14]
-
-                        player_max_score=player_stats['rows'][0][18]
-                        player_max_average=player_stats['rows'][0][17]
-                        player_max_kills=player_stats['rows'][0][15]
-                        player_max_deaths=player_stats['rows'][0][16]
-                        player_max_ping=player_stats['rows'][0][19]
-
-                        all_avg_score=all_stats['rows'][0][8]
-                        all_avg_average=all_stats['rows'][0][7]
-                        all_avg_kills=all_stats['rows'][0][5]
-                        all_avg_deaths=all_stats['rows'][0][6]
-                        all_avg_ping=all_stats['rows'][0][9]
-
-                        all_min_score=all_stats['rows'][0][13]
-                        all_min_average=all_stats['rows'][0][12]
-                        all_min_kills=all_stats['rows'][0][10]
-                        all_min_deaths=all_stats['rows'][0][11]
-                        all_min_ping=all_stats['rows'][0][14]
-
-                        all_max_score=all_stats['rows'][0][18]
-                        all_max_average=all_stats['rows'][0][17]
-                        all_max_kills=all_stats['rows'][0][15]
-                        all_max_deaths=all_stats['rows'][0][16]
-                        all_max_ping=all_stats['rows'][0][19]
-
-                        if all_max_score<1:
-                            all_max_score=1
-                        if all_max_average<1:
-                            all_max_average=1
-                        if all_max_kills<1:
-                            all_max_kills=1
-                        if all_max_deaths<1:
-                            all_max_deaths=1
-                        if all_max_ping<1:
-                            all_max_ping=1
-
-                        relative_score=10*player_max_score/all_max_score
-                        relative_average=10*player_max_average/all_max_average
-                        relative_kills=10*player_max_kills/all_max_kills
-                        relative_deaths=10*player_max_deaths/all_max_deaths
-                        relative_ping=10*player_max_ping/all_max_ping
-
-                        score_rank=int(relative_score)
-                        if score_rank<4:
-                            score_rank_title='Bronze'
-                        elif score_rank<7:
-                            score_rank_title='Silver'
-                        elif score_rank<10:
-                            score_rank_title='Gold'
-                        else:
-                            score_rank_title='Platinum'
-
-                        average_rank=int(relative_average)
-                        if average_rank<4:
-                            average_rank_title='Bronze'
-                        elif average_rank<7:
-                            average_rank_title='Silver'
-                        elif average_rank<10:
-                            average_rank_title='Gold'
-                        else:
-                            average_rank_title='Platinum'
-
+                        rank=ranks['rows'][0][0]
+                        title=ranks['rows'][0][1]
                         parts=[
-                            user_message+': successful\n',
-                            '',
-                            'VERY MUCH WIP',
-                            '',
-                            'rank based on score: '+str(score_rank)+' ('+score_rank_title+')',
-                            'rank based on average: '+str(score_rank)+' ('+score_rank_title+')']
-
+                            user_message+': successful\n'
+                            'rank: '+str(rank),
+                            'title: '+str(title)]
                         response=''
                         for part in parts:
                             response=response+'\n'+part
