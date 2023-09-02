@@ -559,7 +559,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                     query+=",MIN(kills) as min_kills,MIN(deaths) as min_deaths,MIN(average) as min_average,MIN(score) as min_score,MIN(ping) as min_ping"
                     query+=",MAX(kills) as max_kills,MAX(deaths) as max_deaths,MAX(average) as max_average,MAX(score) as max_score,MAX(ping) as max_ping"
                     query+=" FROM stats WHERE gamemode='SND' AND steamusers_id=%s "
-                    #query+="AND matchended IS TRUE AND playercount>9 "
+                    query+="AND matchended IS TRUE AND playercount=10 "
                     query+="ORDER BY timestamp ASC"
                     values=[]
                     values.append(steamusers_id)
@@ -568,7 +568,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
 
                     # get all entries for steamuser (for rowcount)
                     query="SELECT id FROM stats WHERE gamemode='SND' AND steamusers_id=%s "
-                    #query+="AND matchended IS TRUE AND playercount>9 "
+                    query+="AND matchended IS TRUE AND playercount=10 "
                     query+="ORDER BY timestamp ASC"
                     values=[]
                     values.append(steamusers_id)
