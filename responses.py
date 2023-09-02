@@ -88,7 +88,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
         logmsg(logfile,'debug','rconparams: '+str(rconparams))
         conn=PavlovRCON(config['rconip'],config['rconport'],config['rconpass'])
         for rconparam in rconparams:
-            rconcmd+=' '+str(rconparam)
+            rconcmd+=' '+rconparam
         data=await conn.send(rconcmd)
         data_json=json.dumps(data)
         data=json.loads(data_json)
@@ -96,15 +96,15 @@ async def get_response(config,logfile,client,message,user_message,is_private):
         await conn.send('Disconnect')
         return data
 
-    def get_rconparams(user_message):
+    def get_rconparams_from_user_message(user_message):
         maxnumparams=3
         numsplitparts=maxnumparams+1
         user_message_split=user_message.split(' ',numsplitparts)
-        rconparams={}
+        rconparams=[]
         i=0
         while i<(len(user_message_split)-1):
-            pos=i+1
-            rconparams[i]=user_message_split[pos]
+            pos=i+1 # to strip the command itself
+            rconparams.append(user_message_split[pos])
             i+=1
         return rconparams
 
@@ -274,7 +274,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
 
             case '!setmap':
                 rconparams={}
-                rconparams=get_rconparams(user_message)
+                rconparams=get_rconparams_from_user_message(user_message)
                 if (len(rconparams))<1:
                     response='SwitchMap is missing parameters'
                 else:
@@ -307,7 +307,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
 
             case '!kick':
                 rconparams={}
-                rconparams=get_rconparams(user_message)
+                rconparams=get_rconparams_from_user_message(user_message)
                 if (len(rconparams))<1:
                     response='Kick is missing parameters'
                 else:
@@ -319,7 +319,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
 
             case '!ban':
                 rconparams={}
-                rconparams=get_rconparams(user_message)
+                rconparams=get_rconparams_from_user_message(user_message)
                 if (len(rconparams))<1:
                     response='Ban is missing parameters'
                 else:
@@ -331,7 +331,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
 
             case '!unban':
                 rconparams={}
-                rconparams=get_rconparams(user_message)
+                rconparams=get_rconparams_from_user_message(user_message)
                 if (len(rconparams))<1:
                     response='Unban is missing parameters'
                 else:
