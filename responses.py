@@ -45,41 +45,34 @@ async def get_response(config,logfile,client,message,user_message,is_private):
     logmsg(logfile,'debug','is_private: '+str(is_private))
 
     def dbquery(query,values):
-        logmsg(logfile,'debug','dbquery called')
-        logmsg(logfile,'debug','query: '+str(query))
-        logmsg(logfile,'debug','values: '+str(values))
-        logmsg(logfile,'debug','len(values): '+str(len(values)))
+        #print('[DEBUG] dbquery called')
+        #print('[DEBUG] query: '+str(query))
+        #print('[DEBUG] values: '+str(values))
+        #print('[DEBUG] len(values): '+str(len(values)))
         conn=mysql.connector.connect(
             host=config['mysqlhost'],
             port=config['mysqlport'],
             user=config['mysqluser'],
             password=config['mysqlpass'],
             database=config['mysqldatabase'])
-        logmsg(logfile,'debug','conn: '+str(conn))
-        cursor=conn.cursor(buffered=True)
+        #print('[DEBUG] conn: '+str(conn))
+        cursor=conn.cursor(buffered=True,dictionary=True)
         cursor.execute(query,(values))
         conn.commit()
         data={}
         data['rowcount']=cursor.rowcount
-        logmsg(logfile,'debug','data[rowcount]: '+str(data['rowcount']))
         query_type0=query.split(' ',2)
         query_type=str(query_type0[0])
-        logmsg(logfile,'debug','query_type: '+query_type)
+        #print('[DEBUG] query_type: '+query_type)
+
         if query_type.upper()=="SELECT":
-            rows=cursor.fetchall()
-            logmsg(logfile,'debug','rows: '+str(rows))
-            i=0
-            data['rows']={}
-            for row in rows:
-                logmsg(logfile,'debug','row: '+str(row))
-                data['rows'][0]=row
-                i+=1
+            data['rows']=cursor.fetchall()
+            print('[DEBUG] data[rows]: '+str(data['rows']))
         else:
             data['rows']=False
-        logmsg(logfile,'debug','dbquery data: '+str(data))
         cursor.close()
         conn.close()
-        logmsg(logfile,'debug','conn and conn closed')
+        #print('[DEBUG] conn and conn closed')
         return data
 
     async def rcon(rconcmd,rconparams):
@@ -422,7 +415,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                     values=[]
                     values.append(steamid64)
                     steamusers=dbquery(query,values)
-                    steamusers_id=data['rows'][0][0]
+                    steamusers_id=data['rows'][0]['id']
                     
                     # get discorduser id
                     logmsg(logfile,'debug','checking if discordid exists in discordusers db')
@@ -447,7 +440,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                     values=[]
                     values.append(discordid)
                     discordusers=dbquery(query,values)
-                    discordusers_id=data['rows'][0][0]
+                    discordusers_id=data['rows'][0]['id']
 
                     # check if steamuser and discorduser are already registered
                     logmsg(logfile,'debug','checking if entry in register db exists')
@@ -478,12 +471,12 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                             response='registered steamid64 ('+str(steamid64)+') with discordid ('+str(discordid)+')'
                         else:
                             # discorduser is registered with a different steamid64
-                            register_id=data['rows'][0][0]
+                            register_id=data['rows'][0]['id']
                             logmsg(logfile,'warn','entry found in register db discordusers_id ('+str(discordusers_id)+') with id ('+str(register_id)+'), but with a different steamid64')
                             response='already registered discordusers_id ('+str(discordusers_id)+') as id ('+str(register_id)+'), but with a different steamid64'
                     else:
                         # discorduser is already registered with given steamid64
-                        register_id=data['rows'][0][0]
+                        register_id=data['rows'][0]['id']
                         logmsg(logfile,'warn','entry found in register db for steamusers_id ('+str(steamusers_id)+') and discordusers_id ('+str(discordusers_id)+') with id ('+str(register_id)+')')
                         response='already registered steamusers_id ('+str(steamusers_id)+') with discordusers_id ('+str(discordusers_id)+') as id ('+str(register_id)+')'
                 else:
@@ -507,7 +500,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
 
                     if discordusers['rowcount']==0:
                         # actually delete
-                        discordusers_id=discordusers['rows'][0][0]
+                        discordusers_id=discordusers['rows'][0]['id']
                         query="DELETE FROM register WHERE discordusers_id = %s LIMIT 1"
                         values=[]
                         values.append(discordusers_id)
@@ -537,16 +530,30 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                     response='discordid not registered - use !help for more info'
                 else:
                     # discorduser exists
-                    discordusers_id=discordusers['rows'][0][0]
+                    discordusers_id=discordusers['rows'][0]['id']
 
                     # get id for steamuser from register db
                     query="SELECT steamusers_id FROM register WHERE discordusers_id=%s LIMIT 1"
                     values=[]
                     values.append(discordusers_id)
                     register=dbquery(query,values)
-                    steamusers_id=register['rows'][0][0]
+                    steamusers_id=register['rows'][0]['steamusers_id']
 
-                    # get global averages for steamuser from stats db
+                    # get steamusers steamid64
+                    query="SELECT steamid64 FROM steamusers WHERE id=%s LIMIT 1"
+                    values=[]
+                    values.append(steamusers_id)
+                    steamusers=dbquery(query,values)
+                    steamusers_steamid64=steamusers['rows'][0]['steamid64']
+
+                    # get steamusers details
+                    #query="SELECT ... FROM steamusers_details WHERE steamusers_id=%s LIMIT 1"
+                    #values=[]
+                    #values.append(steamusers_id)
+                    #steamusers_details=dbquery(query,values)
+                    #...
+
+                    # get averages for steamuser from stats db
                     query="SELECT kills,deaths,average,score,ping"
                     query+=",AVG(kills) as avg_kills,AVG(deaths) as avg_deaths,AVG(average) as avg_average,AVG(score) as avg_score,AVG(ping) as avg_ping"
                     query+=",MIN(kills) as min_kills,MIN(deaths) as min_deaths,MIN(average) as min_average,MIN(score) as min_score,MIN(ping) as min_ping"
@@ -559,6 +566,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                     stats=dbquery(query,values)
                     logmsg(logfile,'debug','stats: '+str(stats))
 
+                    # get all entries for steamuser (for rowcount)
                     query="SELECT id FROM stats WHERE gamemode='SND' AND steamusers_id=%s "
                     #query+="AND matchended IS TRUE AND playercount>9 "
                     query+="ORDER BY timestamp ASC"
@@ -577,21 +585,13 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                             '',
                             'VERY MUCH WIP',
                             '',
-                            'avg_score: '+str(stats['rows'][0][8]),
-                            'avg_average: '+str(stats['rows'][0][7]),
-                            'avg_kills: '+str(stats['rows'][0][5]),
-                            'avg_deaths: '+str(stats['rows'][0][6]),
-                            'avg_ping: '+str(stats['rows'][0][9]),
-                            'min_score: '+str(stats['rows'][0][13]),
-                            'min_average: '+str(stats['rows'][0][12]),
-                            'min_kills: '+str(stats['rows'][0][10]),
-                            'min_deaths: '+str(stats['rows'][0][11]),
-                            'min_ping: '+str(stats['rows'][0][14]),
-                            'max_score: '+str(stats['rows'][0][18]),
-                            'max_average: '+str(stats['rows'][0][17]),
-                            'max_kills: '+str(stats['rows'][0][15]),
-                            'max_deaths: '+str(stats['rows'][0][16]),
-                            'max_ping: '+str(stats['rows'][0][19])]
+                            'Number of entries found for player '+str(steamusers_steamid64)+': '+str(all_stats['rowcount']),
+                            'AVG Score: '+str(stats['rows'][0]['avg_score']),
+                            'AVG KDR: '+str(stats['rows'][0]['avg_average']),
+                            'AVG Kills: '+str(stats['rows'][0]['avg_kills']),
+                            'AVG Deaths: '+str(stats['rows'][0]['avg_deaths']),
+                            'AVG Ping: '+str(stats['rows'][0]['avg_ping'])
+                        ]
                         response=''
                         for part in parts:
                             response=response+'\n'+part
@@ -610,14 +610,14 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                     response='discordid not registered - use !help for more info'
                 else:
                     # discorduser exists
-                    discordusers_id=discordusers['rows'][0][0]
+                    discordusers_id=discordusers['rows'][0]['id']
 
                     # get id for steamuser from register db
                     query="SELECT steamusers_id FROM register WHERE discordusers_id=%s LIMIT 1"
                     values=[]
                     values.append(discordusers_id)
                     register=dbquery(query,values)
-                    steamusers_id=register['rows'][0][0]
+                    steamusers_id=register['rows'][0]['steamusers_id']
 
                     # get rank for steamuser from ranks db
                     query="SELECT rank,title FROM ranks WHERE steamusers_id=%s LIMIT 1"
@@ -630,8 +630,8 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                         logmsg(logfile,'warn','no rank found')
                         response='no rank found - maybe because there are not enough stats to generate them - use !getstats to show your stats'
                     else:
-                        rank=ranks['rows'][0][0]
-                        title=ranks['rows'][0][1]
+                        rank=ranks['rows'][0]['rank']
+                        title=ranks['rows'][0]['title']
                         parts=[
                             user_message+': successful\n'
                             'rank: '+str(rank),
