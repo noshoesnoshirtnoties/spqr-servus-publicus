@@ -110,37 +110,41 @@ async def get_response(config,logfile,client,message,user_message,is_private):
         # make sure gamemode is uppercase
         serverinfo['GameMode']=serverinfo['GameMode'].upper()
 
-        # demo rec counts as 1 player in SND
-        if serverinfo['GameMode']=="SND":
-            numberofplayers0=serverinfo['PlayerCount'].split('/',2)
-            numberofplayers1=numberofplayers0[0]
-            if int(numberofplayers1)>0: # demo only exists if there is a player?
-                numberofplayers2=(int(numberofplayers1)-1)
+        if serverinfo['RoundState']=='Rotating':
+            data['Successful']=False
+        else:
+            # demo rec counts as 1 player in SND
+            if serverinfo['GameMode']=="SND":
+                numberofplayers0=serverinfo['PlayerCount'].split('/',2)
+                numberofplayers1=numberofplayers0[0]
+                if int(numberofplayers1)>0: # demo only exists if there is a players
+                    numberofplayers2=(int(numberofplayers1)-1)
+                else:
+                    numberofplayers2=(numberofplayers0[0])
+                maxplayers=numberofplayers0[1]
+                numberofplayers=str(numberofplayers2)+'/'+str(maxplayers)
             else:
-                numberofplayers2=(numberofplayers0[0])
-            maxplayers=numberofplayers0[1]
-            numberofplayers=str(numberofplayers2)+'/'+str(maxplayers)
-        else:
-            numberofplayers=serverinfo['PlayerCount']
-        serverinfo['PlayerCount']=numberofplayers
+                numberofplayers=serverinfo['PlayerCount']
+            serverinfo['PlayerCount']=numberofplayers
 
-        # for SND get info if match has ended and which team won
-        serverinfo['MatchEnded']=False
-        serverinfo['WinningTeam']='none'
-        if serverinfo['GameMode']=="SND" and serverinfo['Teams'] is True:
-            if int(serverinfo['Team0Score'])==10:
-                serverinfo['MatchEnded']=True
-                serverinfo['WinningTeam']='team0'
-            elif int(serverinfo['Team1Score'])==10:
-                serverinfo['MatchEnded']=True
-                serverinfo['WinningTeam']='team1'
-        else:
-            serverinfo['Team0Score']=0
-            serverinfo['Team1Score']=0
-        if serverinfo['MatchEnded'] is True:
-            logmsg(logfile,'info','end of match detected')
-            logmsg(logfile,'info','team0score: '+str(serverinfo['Team0Score']))
-            logmsg(logfile,'info','team1score: '+str(serverinfo['Team1Score']))
+            # for SND get info if match has ended and which team won
+            serverinfo['MatchEnded']=False
+            serverinfo['WinningTeam']='none'
+            if serverinfo['GameMode']=="SND" and serverinfo['Teams'] is True:
+                if int(serverinfo['Team0Score'])==10:
+                    serverinfo['MatchEnded']=True
+                    serverinfo['WinningTeam']='team0'
+                elif int(serverinfo['Team1Score'])==10:
+                    serverinfo['MatchEnded']=True
+                    serverinfo['WinningTeam']='team1'
+            else:
+                serverinfo['Team0Score']=0
+                serverinfo['Team1Score']=0
+            if serverinfo['MatchEnded'] is True:
+                logmsg(logfile,'info','end of match detected')
+                logmsg(logfile,'info','team0score: '+str(serverinfo['Team0Score']))
+                logmsg(logfile,'info','team1score: '+str(serverinfo['Team1Score']))
+            
         data['ServerInfo']=serverinfo
         return data
 
