@@ -402,6 +402,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                     values=[]
                     values.append(steamid64)
                     steamusers=dbquery(query,values)
+                    logmsg(logfile,'debug','steamusers: '+str(steamusers))
 
                     # add steamuser if it does not exist
                     if steamusers['rowcount']==0:
@@ -415,11 +416,11 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                         logmsg(logfile,'debug','steamid64 already exists in steamusers db')
                     
                     # get the steamuser id
-                    query="SELECT id FROM steamusers WHERE steamid64=%s LIMIT 1"
+                    query="SELECT id FROM steamusers WHERE steamid64 = %s LIMIT 1"
                     values=[]
                     values.append(steamid64)
                     steamusers=dbquery(query,values)
-                    steamusers_id=data['rows'][0]['id']
+                    steamusers_id=steamusers['rows'][0]['id']
                     
                     # get discorduser id
                     logmsg(logfile,'debug','checking if discordid exists in discordusers db')
@@ -427,6 +428,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                     values=[]
                     values.append(discordid)
                     discordusers=dbquery(query,values)
+                    logmsg(logfile,'debug','discordusers: '+str(discordusers))
 
                     # add discorduser if it does not exist
                     if discordusers['rowcount']==0:
@@ -440,11 +442,11 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                         logmsg(logfile,'debug','discordid already exists in discordusers db')
 
                     # get discorduser id
-                    query="SELECT id FROM discordusers WHERE discordid=%s LIMIT 1"
+                    query="SELECT id FROM discordusers WHERE discordid = %s LIMIT 1"
                     values=[]
                     values.append(discordid)
                     discordusers=dbquery(query,values)
-                    discordusers_id=data['rows'][0]['id']
+                    discordusers_id=discordusers['rows'][0]['id']
 
                     # check if steamuser and discorduser are already registered
                     logmsg(logfile,'debug','checking if entry in register db exists')
@@ -475,12 +477,12 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                             response='registered steamid64 ('+str(steamid64)+') with discordid ('+str(discordid)+')'
                         else:
                             # discorduser is registered with a different steamid64
-                            register_id=data['rows'][0]['id']
+                            register_id=register['rows'][0]['id']
                             logmsg(logfile,'warn','entry found in register db discordusers_id ('+str(discordusers_id)+') with id ('+str(register_id)+'), but with a different steamid64')
                             response='already registered discordusers_id ('+str(discordusers_id)+') as id ('+str(register_id)+'), but with a different steamid64'
                     else:
                         # discorduser is already registered with given steamid64
-                        register_id=data['rows'][0]['id']
+                        register_id=register['rows'][0]['id']
                         logmsg(logfile,'warn','entry found in register db for steamusers_id ('+str(steamusers_id)+') and discordusers_id ('+str(discordusers_id)+') with id ('+str(register_id)+')')
                         response='already registered steamusers_id ('+str(steamusers_id)+') with discordusers_id ('+str(discordusers_id)+') as id ('+str(register_id)+')'
                 else:
