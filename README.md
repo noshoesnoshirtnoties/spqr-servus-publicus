@@ -17,6 +17,7 @@ general purpose bot for the spqr discord server
   * mysql-connector
 
 ## todo (aside from finding and fixing bugs and improving the code in general)
+* add !modlist, !blacklist, !pings
 * allow map aliases for !setmap
 * auto-message new discord users
 * pull user access rights from roles
