@@ -561,10 +561,10 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                         #...
 
                         # get averages for steamuser from stats db
-                        query="SELECT kills,deaths,average,score,ping"
-                        query+=",AVG(kills) as avg_kills,AVG(deaths) as avg_deaths,AVG(average) as avg_average,AVG(score) as avg_score,AVG(ping) as avg_ping"
-                        query+=",MIN(kills) as min_kills,MIN(deaths) as min_deaths,MIN(average) as min_average,MIN(score) as min_score,MIN(ping) as min_ping"
-                        query+=",MAX(kills) as max_kills,MAX(deaths) as max_deaths,MAX(average) as max_average,MAX(score) as max_score,MAX(ping) as max_ping"
+                        query="SELECT kills,deaths,assists,score,ping"
+                        query+=",AVG(kills) as avg_kills,AVG(deaths) as avg_deaths,AVG(assists) as avg_assists,AVG(score) as avg_score,AVG(ping) as avg_ping"
+                        query+=",MIN(kills) as min_kills,MIN(deaths) as min_deaths,MIN(assists) as min_assists,MIN(score) as min_score,MIN(ping) as min_ping"
+                        query+=",MAX(kills) as max_kills,MAX(deaths) as max_deaths,MAX(assists) as max_assists,MAX(score) as max_score,MAX(ping) as max_ping"
                         query+=" FROM stats WHERE gamemode='SND' AND steamusers_id=%s "
                         query+="AND matchended IS TRUE AND playercount=10 "
                         query+="ORDER BY timestamp ASC"
@@ -581,7 +581,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                         values.append(steamusers_id)
                         all_stats=dbquery(query,values)
 
-                        limit_stats=2
+                        limit_stats=3
                         if all_stats['rowcount']<limit_stats:
                             # not enough stats
                             logmsg(logfile,'info','not enough data to generate stats ('+str(all_stats['rowcount'])+')')
@@ -589,9 +589,12 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                         else:
                             parts=[
                                 user_message+': successful\n'
-                                'Entries found for player '+str(steamusers_steamid64)+' (steamid64): '+str(all_stats['rowcount']),
+                                '',
+                                'WIP',
+                                '',
+                                'Entries found for player '+str(steamusers_steamid64)+': '+str(all_stats['rowcount']),
                                 'AVG Score: '+str(stats['rows'][0]['avg_score']),
-                                'AVG KDR: '+str(stats['rows'][0]['avg_average']),
+                                'AVG Assists: '+str(stats['rows'][0]['avg_assists']),
                                 'AVG Kills: '+str(stats['rows'][0]['avg_kills']),
                                 'AVG Deaths: '+str(stats['rows'][0]['avg_deaths']),
                                 'AVG Ping: '+str(stats['rows'][0]['avg_ping'])
@@ -638,6 +641,9 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                             title=ranks['rows'][0]['title']
                             parts=[
                                 user_message+': successful\n'
+                                '',
+                                'WIP',
+                                '',
                                 'rank: '+str(rank),
                                 'title: '+str(title)]
                             response=''
