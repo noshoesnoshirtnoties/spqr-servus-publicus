@@ -152,498 +152,499 @@ async def get_response(config,logfile,client,message,user_message,is_private):
     user_message_split=user_message.split(' ',2)
     command=user_message_split[0]
     #logmsg(logfile,'debug','command: '+str(command))
-    paramsgiven=False
-    if len(user_message_split)>1:
-        logmsg(logfile,'debug','params have been given')
-        paramsgiven=True
+    if str(command)!='': # this seems to occur with system messages (in discord; like in new-arrivals)
+        paramsgiven=False
+        if len(user_message_split)>1:
+            logmsg(logfile,'debug','params have been given')
+            paramsgiven=True
 
-    is_praefectus=False
-    for id in config['praefectus-member']:
-        if str(id)==str(message.author.id):
-            is_praefectus=True
-            logmsg(logfile,'info','user has praefectus role')
-    is_senate=False
-    for id in config['senate-member']:
-        if str(id)==str(message.author.id):
-            is_senate=True
-            logmsg(logfile,'info','user has senate role')
-    is_architecti=False
-    for id in config['architecti-member']:
-        if str(id)==str(message.author.id):
-            is_architecti=True
-            logmsg(logfile,'info','user has architecti role')
+        is_praefectus=False
+        for id in config['praefectus-member']:
+            if str(id)==str(message.author.id):
+                is_praefectus=True
+                logmsg(logfile,'info','user has praefectus role')
+        is_senate=False
+        for id in config['senate-member']:
+            if str(id)==str(message.author.id):
+                is_senate=True
+                logmsg(logfile,'info','user has senate role')
+        is_architecti=False
+        for id in config['architecti-member']:
+            if str(id)==str(message.author.id):
+                is_architecti=True
+                logmsg(logfile,'info','user has architecti role')
 
-    access_granted=True
-    for praefectuscmd in config['praefectus-cmds']:
-        if praefectuscmd==command:
-            logmsg(logfile,'info','praefectus-cmd found')
-            if is_praefectus is not True:
-                logmsg(logfile,'warn','missing access rights for command: '+str(command))
-                access_granted=False
-    for senatecmd in config['senate-cmds']:
-        if senatecmd==command:
-            logmsg(logfile,'info','senate-cmd found')
-            if is_senate is not True:
-                logmsg(logfile,'warn','missing access rights for command: '+str(command))
-                access_granted=False
-    for architecticmd in config['architecti-cmds']:
-        if architecticmd==command:
-            logmsg(logfile,'info','architecti-cmd found')
-            if is_architecti is not True:
-                logmsg(logfile,'warn','missing access rights for command: '+str(command))
-                access_granted=False
+        access_granted=True
+        for praefectuscmd in config['praefectus-cmds']:
+            if praefectuscmd==command:
+                logmsg(logfile,'info','praefectus-cmd found')
+                if is_praefectus is not True:
+                    logmsg(logfile,'warn','missing access rights for command: '+str(command))
+                    access_granted=False
+        for senatecmd in config['senate-cmds']:
+            if senatecmd==command:
+                logmsg(logfile,'info','senate-cmd found')
+                if is_senate is not True:
+                    logmsg(logfile,'warn','missing access rights for command: '+str(command))
+                    access_granted=False
+        for architecticmd in config['architecti-cmds']:
+            if architecticmd==command:
+                logmsg(logfile,'info','architecti-cmd found')
+                if is_architecti is not True:
+                    logmsg(logfile,'warn','missing access rights for command: '+str(command))
+                    access_granted=False
 
-    if access_granted:
-        logmsg(logfile,'info','access to command has been granted')
-        match command:
-            case '!help':
-                response=Path('txt/help.txt').read_text()
+        if access_granted:
+            logmsg(logfile,'info','access to command has been granted')
+            match command:
+                case '!help':
+                    response=Path('txt/help.txt').read_text()
 
-            case '!spqr':
-                response=Path('txt/spqr.txt').read_text()
+                case '!spqr':
+                    response=Path('txt/spqr.txt').read_text()
 
-            case '!loremipsum':
-                response=Path('txt/loremipsum.txt').read_text()
+                case '!loremipsum':
+                    response=Path('txt/loremipsum.txt').read_text()
 
-            case '!invite':
-                response=Path('txt/invite.txt').read_text()
+                case '!invite':
+                    response=Path('txt/invite.txt').read_text()
 
-            case '!roles':
-                response=Path('txt/roles.txt').read_text()
+                case '!roles':
+                    response=Path('txt/roles.txt').read_text()
 
-            case '!rules':
-                response=Path('txt/rules.txt').read_text()
+                case '!rules':
+                    response=Path('txt/rules.txt').read_text()
 
-            case '!reqs':
-                response=Path('txt/requirements.txt').read_text()
+                case '!reqs':
+                    response=Path('txt/requirements.txt').read_text()
 
-            case '!suntzu':
-                randomquote=random.choice(os.listdir('txt/suntzu'))
-                quotepath="txt/suntzu/"+randomquote
-                response=Path(str(quotepath)).read_text()
+                case '!suntzu':
+                    randomquote=random.choice(os.listdir('txt/suntzu'))
+                    quotepath="txt/suntzu/"+randomquote
+                    response=Path(str(quotepath)).read_text()
 
-            case '!serverinfo':
-                serverinfo=await get_serverinfo()
-                if serverinfo['Successful'] is True:
-                    logmsg(logfile,'debug','!serverinfo successful')
+                case '!serverinfo':
+                    serverinfo=await get_serverinfo()
+                    if serverinfo['Successful'] is True:
+                        logmsg(logfile,'debug','!serverinfo successful')
 
-                    parts=[
-                        user_message+': successful\n',
-                        'ServerName: '+str(serverinfo['ServerInfo']['ServerName']),
-                        'PlayerCount: '+str(serverinfo['ServerInfo']['PlayerCount']),
-                        'MapLabel: '+str(serverinfo['ServerInfo']['MapLabel']),
-                        'GameMode: '+str(serverinfo['ServerInfo']['GameMode']),
-                        'RoundState: '+str(serverinfo['ServerInfo']['RoundState']),
-                        'Teams: '+str(serverinfo['ServerInfo']['Teams']),
-                        'Team0Score: '+str(serverinfo['ServerInfo']['Team0Score']),
-                        'Team1Score: '+str(serverinfo['ServerInfo']['Team1Score']),
-                        'MatchEnded: '+str(serverinfo['ServerInfo']['MatchEnded']),
-                        'WinningTeam: '+str(serverinfo['ServerInfo']['WinningTeam'])]
-                    for part in parts:
-                        response=response+'\n'+part
-                else:
-                    response=user_message+': something went wrong'
+                        parts=[
+                            user_message+': successful\n',
+                            'ServerName: '+str(serverinfo['ServerInfo']['ServerName']),
+                            'PlayerCount: '+str(serverinfo['ServerInfo']['PlayerCount']),
+                            'MapLabel: '+str(serverinfo['ServerInfo']['MapLabel']),
+                            'GameMode: '+str(serverinfo['ServerInfo']['GameMode']),
+                            'RoundState: '+str(serverinfo['ServerInfo']['RoundState']),
+                            'Teams: '+str(serverinfo['ServerInfo']['Teams']),
+                            'Team0Score: '+str(serverinfo['ServerInfo']['Team0Score']),
+                            'Team1Score: '+str(serverinfo['ServerInfo']['Team1Score']),
+                            'MatchEnded: '+str(serverinfo['ServerInfo']['MatchEnded']),
+                            'WinningTeam: '+str(serverinfo['ServerInfo']['WinningTeam'])]
+                        for part in parts:
+                            response=response+'\n'+part
+                    else:
+                        response=user_message+': something went wrong'
 
-            case '!maplist':
-                maplist=await rcon('MapList',{})
-                if maplist['Successful'] is True:
-                    logmsg(logfile,'debug','!maplist successful')
-                    response=user_message+': successful'
+                case '!maplist':
+                    maplist=await rcon('MapList',{})
+                    if maplist['Successful'] is True:
+                        logmsg(logfile,'debug','!maplist successful')
+                        response=user_message+': successful'
 
-                    for part in maplist['MapList']:
-                        response=response+'\n'+str(part['MapId'])+' as '+str(part['GameMode'])
-                else:
-                    response=user_message+': something went wrong'
+                        for part in maplist['MapList']:
+                            response=response+'\n'+str(part['MapId'])+' as '+str(part['GameMode'])
+                    else:
+                        response=user_message+': something went wrong'
 
-            case '!playerlist':
-                inspectall=await rcon('InspectAll',{})
-                if inspectall['Successful'] is True:
-                    logmsg(logfile,'debug','!inspectall successful')
-                    response=user_message+': successful'
+                case '!playerlist':
+                    inspectall=await rcon('InspectAll',{})
+                    if inspectall['Successful'] is True:
+                        logmsg(logfile,'debug','!inspectall successful')
+                        response=user_message+': successful'
 
-                    for player in inspectall['InspectList']:
-                        response=response+'\n'+str(player['PlayerName'])+' ('+str(player['UniqueId'])+')'
-                else:
-                    response=user_message+': something went wrong'
+                        for player in inspectall['InspectList']:
+                            response=response+'\n'+str(player['PlayerName'])+' ('+str(player['UniqueId'])+')'
+                    else:
+                        response=user_message+': something went wrong'
 
-            case '!resetsnd':
-                resetsnd=await rcon('ResetSND',{})
-                if resetsnd['Successful'] is True:
-                    response=user_message+' successful'
-                else:
-                    response=user_message+' something went wrong'
+                case '!resetsnd':
+                    resetsnd=await rcon('ResetSND',{})
+                    if resetsnd['Successful'] is True:
+                        response=user_message+' successful'
+                    else:
+                        response=user_message+' something went wrong'
 
-            case '!rotatemap':
-                rotatemap=await rcon('RotateMap',{})
-                if rotatemap['Successful'] is True:
-                    response=user_message+' successful'
-                else:
-                    response=user_message+' something went wrong'
+                case '!rotatemap':
+                    rotatemap=await rcon('RotateMap',{})
+                    if rotatemap['Successful'] is True:
+                        response=user_message+' successful'
+                    else:
+                        response=user_message+' something went wrong'
 
-            case '!setmap':
-                rconparams={}
-                rconparams=get_rconparams_from_user_message(user_message)
-                if (len(rconparams))<1:
-                    response='SwitchMap is missing parameters'
-                else:
-                    switchmap=await rcon('SwitchMap',rconparams)
+                case '!setmap':
+                    rconparams={}
+                    rconparams=get_rconparams_from_user_message(user_message)
+                    if (len(rconparams))<1:
+                        response='SwitchMap is missing parameters'
+                    else:
+                        switchmap=await rcon('SwitchMap',rconparams)
+                        if switchmap['Successful'] is True:
+                            response=user_message+' successful'
+                        else:
+                            response=user_message+' something went wrong'
+
+                case '!setrandommap':
+                    maplist=await rcon('MapList',{})
+                    poolofrandommaps={}
+                    i=0
+                    for mapentry in maplist['MapList']:
+                        if mapentry['GameMode'].upper()=='SND':
+                            if mapentry['MapId'] not in poolofrandommaps:
+                                poolofrandommaps[i]=mapentry['MapId']
+                                i+=1
+                    randommap=random.choice(poolofrandommaps)
+                    gamemode='SND'
+                    rconcmd='SwitchMap'
+                    rconparams={randommap,gamemode}
+                    switchmap=await rcon(rconcmd,rconparams)
                     if switchmap['Successful'] is True:
                         response=user_message+' successful'
                     else:
                         response=user_message+' something went wrong'
 
-            case '!setrandommap':
-                maplist=await rcon('MapList',{})
-                poolofrandommaps={}
-                i=0
-                for mapentry in maplist['MapList']:
-                    if mapentry['GameMode'].upper()=='SND':
-                        if mapentry['MapId'] not in poolofrandommaps:
-                            poolofrandommaps[i]=mapentry['MapId']
-                            i+=1
-                randommap=random.choice(poolofrandommaps)
-                gamemode='SND'
-                rconcmd='SwitchMap'
-                rconparams={randommap,gamemode}
-                switchmap=await rcon(rconcmd,rconparams)
-                if switchmap['Successful'] is True:
-                    response=user_message+' successful'
-                else:
-                    response=user_message+' something went wrong'
-
-            case '!kick':
-                rconparams={}
-                rconparams=get_rconparams_from_user_message(user_message)
-                if (len(rconparams))<1:
-                    response='Kick is missing parameters'
-                else:
-                    kick=await rcon('Kick',{rconparams[0]})
-                    if kick['Successful'] is True:
-                        response=user_message+' successful'
+                case '!kick':
+                    rconparams={}
+                    rconparams=get_rconparams_from_user_message(user_message)
+                    if (len(rconparams))<1:
+                        response='Kick is missing parameters'
                     else:
-                        response=user_message+' something went wrong'
+                        kick=await rcon('Kick',{rconparams[0]})
+                        if kick['Successful'] is True:
+                            response=user_message+' successful'
+                        else:
+                            response=user_message+' something went wrong'
 
-            case '!ban':
-                rconparams={}
-                rconparams=get_rconparams_from_user_message(user_message)
-                if (len(rconparams))<1:
-                    response='Ban is missing parameters'
-                else:
-                    ban=await rcon('Ban',{rconparams[0]})
-                    if ban['Successful'] is True:
-                        response=user_message+' successful'
+                case '!ban':
+                    rconparams={}
+                    rconparams=get_rconparams_from_user_message(user_message)
+                    if (len(rconparams))<1:
+                        response='Ban is missing parameters'
                     else:
-                        response=user_message+' something went wrong'
+                        ban=await rcon('Ban',{rconparams[0]})
+                        if ban['Successful'] is True:
+                            response=user_message+' successful'
+                        else:
+                            response=user_message+' something went wrong'
 
-            case '!unban':
-                rconparams={}
-                rconparams=get_rconparams_from_user_message(user_message)
-                if (len(rconparams))<1:
-                    response='Unban is missing parameters'
-                else:
-                    unban=await rcon('Unban',{rconparams[0]})
-                    if unban['Successful'] is True:
-                        response=user_message+' successful'
+                case '!unban':
+                    rconparams={}
+                    rconparams=get_rconparams_from_user_message(user_message)
+                    if (len(rconparams))<1:
+                        response='Unban is missing parameters'
                     else:
-                        response=user_message+' something went wrong'
+                        unban=await rcon('Unban',{rconparams[0]})
+                        if unban['Successful'] is True:
+                            response=user_message+' successful'
+                        else:
+                            response=user_message+' something went wrong'
 
-            case '!echo':
-                if paramsgiven: # requires 1 param
-                    echo_user_message_split0=user_message.split(' ',2)
-                    echo_command=echo_user_message_split0[0]
-                    echo_user_message_split1=user_message.split(echo_command+' ',2)
-                    echo_param=echo_user_message_split1[1]
-                    logmsg(logfile,'debug','echo_user_message_split0: '+str(echo_user_message_split0))
-                    logmsg(logfile,'debug','echo_user_message_split1: '+str(echo_user_message_split1))
-                    logmsg(logfile,'debug','echo_command: '+str(echo_command))
-                    logmsg(logfile,'debug','echo_param: '+str(echo_param))
-                    response=echo_param
-                else:
-                    logmsg(logfile,'warn','missing parameters')
-                    response='missing parameters - use !help for more info'
+                case '!echo':
+                    if paramsgiven: # requires 1 param
+                        echo_user_message_split0=user_message.split(' ',2)
+                        echo_command=echo_user_message_split0[0]
+                        echo_user_message_split1=user_message.split(echo_command+' ',2)
+                        echo_param=echo_user_message_split1[1]
+                        logmsg(logfile,'debug','echo_user_message_split0: '+str(echo_user_message_split0))
+                        logmsg(logfile,'debug','echo_user_message_split1: '+str(echo_user_message_split1))
+                        logmsg(logfile,'debug','echo_command: '+str(echo_command))
+                        logmsg(logfile,'debug','echo_param: '+str(echo_param))
+                        response=echo_param
+                    else:
+                        logmsg(logfile,'warn','missing parameters')
+                        response='missing parameters - use !help for more info'
 
-            case '!writeas':
-                if len(user_message_split)>=3: # requires 2 params
-                    wa_user_message_split0=user_message.split(' ',3)
-                    wa_command=wa_user_message_split0[0]
-                    wa_channel=wa_user_message_split0[1]
-                    wa_user_message_split1=user_message.split(wa_command+' '+wa_channel+' ',2)
-                    wa_param=wa_user_message_split1[1]
-                    logmsg(logfile,'debug','user_message: '+str(user_message))
-                    logmsg(logfile,'debug','wa_user_message_split0: '+str(wa_user_message_split0))
-                    logmsg(logfile,'debug','wa_user_message_split1: '+str(wa_user_message_split1))
-                    logmsg(logfile,'debug','wa_command: '+str(wa_command))
-                    logmsg(logfile,'debug','wa_channel: '+str(wa_channel))
-                    logmsg(logfile,'debug','wa_param: '+str(wa_param))
-                    target_channel_id=config['bot-channel-ids'][wa_channel]
-                    target_message=wa_param
-                    target_channel=client.get_channel(int(target_channel_id))
-                    logmsg(logfile,'debug','target_channel: '+str(target_channel_id))
-                    logmsg(logfile,'debug','target_channel: '+str(target_channel))
-                    try:
-                        await target_channel.send(target_message)
-                        response='message sent successfully'
-                    except Exception as e:
-                        response=str(e).strip()
-                else:
-                    logmsg(logfile,'warn','missing parameters')
-                    response='missing parameters - use !help for more info'
+                case '!writeas':
+                    if len(user_message_split)>=3: # requires 2 params
+                        wa_user_message_split0=user_message.split(' ',3)
+                        wa_command=wa_user_message_split0[0]
+                        wa_channel=wa_user_message_split0[1]
+                        wa_user_message_split1=user_message.split(wa_command+' '+wa_channel+' ',2)
+                        wa_param=wa_user_message_split1[1]
+                        logmsg(logfile,'debug','user_message: '+str(user_message))
+                        logmsg(logfile,'debug','wa_user_message_split0: '+str(wa_user_message_split0))
+                        logmsg(logfile,'debug','wa_user_message_split1: '+str(wa_user_message_split1))
+                        logmsg(logfile,'debug','wa_command: '+str(wa_command))
+                        logmsg(logfile,'debug','wa_channel: '+str(wa_channel))
+                        logmsg(logfile,'debug','wa_param: '+str(wa_param))
+                        target_channel_id=config['bot-channel-ids'][wa_channel]
+                        target_message=wa_param
+                        target_channel=client.get_channel(int(target_channel_id))
+                        logmsg(logfile,'debug','target_channel: '+str(target_channel_id))
+                        logmsg(logfile,'debug','target_channel: '+str(target_channel))
+                        try:
+                            await target_channel.send(target_message)
+                            response='message sent successfully'
+                        except Exception as e:
+                            response=str(e).strip()
+                    else:
+                        logmsg(logfile,'warn','missing parameters')
+                        response='missing parameters - use !help for more info'
 
-            case '!register':
-                if paramsgiven:
-                    user_message_split=user_message.split(' ',2)
-                    db_param=user_message_split[1]
-                    steamid64=db_param
-                    discordid=message.author.id
+                case '!register':
+                    if paramsgiven:
+                        user_message_split=user_message.split(' ',2)
+                        db_param=user_message_split[1]
+                        steamid64=db_param
+                        discordid=message.author.id
 
-                    # check if steamuser exists
-                    logmsg(logfile,'debug','checking if steamid64 exists in steamuser db')
-                    query="SELECT id FROM steamusers WHERE steamid64 = %s LIMIT 1"
-                    values=[]
-                    values.append(steamid64)
-                    steamusers=dbquery(query,values)
-                    logmsg(logfile,'debug','steamusers: '+str(steamusers))
-
-                    # add steamuser if it does not exist
-                    if steamusers['rowcount']==0:
-                        logmsg(logfile,'debug','steamid64 not found in steamusers db')
-                        query="INSERT INTO steamusers (steamid64) VALUES (%s)"
+                        # check if steamuser exists
+                        logmsg(logfile,'debug','checking if steamid64 exists in steamuser db')
+                        query="SELECT id FROM steamusers WHERE steamid64 = %s LIMIT 1"
                         values=[]
                         values.append(steamid64)
-                        dbquery(query,values)
-                        logmsg(logfile,'info','created entry in steamusers db for steamid64 '+str(steamid64))
-                    else:
-                        logmsg(logfile,'debug','steamid64 already exists in steamusers db')
-                    
-                    # get the steamuser id
-                    query="SELECT id FROM steamusers WHERE steamid64 = %s LIMIT 1"
-                    values=[]
-                    values.append(steamid64)
-                    steamusers=dbquery(query,values)
-                    steamusers_id=steamusers['rows'][0]['id']
-                    
-                    # get discorduser id
-                    logmsg(logfile,'debug','checking if discordid exists in discordusers db')
-                    query="SELECT id FROM discordusers WHERE discordid = %s LIMIT 1"
-                    values=[]
-                    values.append(discordid)
-                    discordusers=dbquery(query,values)
-                    logmsg(logfile,'debug','discordusers: '+str(discordusers))
+                        steamusers=dbquery(query,values)
+                        logmsg(logfile,'debug','steamusers: '+str(steamusers))
 
-                    # add discorduser if it does not exist
-                    if discordusers['rowcount']==0:
-                        logmsg(logfile,'debug','discordid not found in discordusers db')
-                        query="INSERT INTO discordusers (discordid) VALUES (%s)"
+                        # add steamuser if it does not exist
+                        if steamusers['rowcount']==0:
+                            logmsg(logfile,'debug','steamid64 not found in steamusers db')
+                            query="INSERT INTO steamusers (steamid64) VALUES (%s)"
+                            values=[]
+                            values.append(steamid64)
+                            dbquery(query,values)
+                            logmsg(logfile,'info','created entry in steamusers db for steamid64 '+str(steamid64))
+                        else:
+                            logmsg(logfile,'debug','steamid64 already exists in steamusers db')
+                        
+                        # get the steamuser id
+                        query="SELECT id FROM steamusers WHERE steamid64 = %s LIMIT 1"
+                        values=[]
+                        values.append(steamid64)
+                        steamusers=dbquery(query,values)
+                        steamusers_id=steamusers['rows'][0]['id']
+                        
+                        # get discorduser id
+                        logmsg(logfile,'debug','checking if discordid exists in discordusers db')
+                        query="SELECT id FROM discordusers WHERE discordid = %s LIMIT 1"
                         values=[]
                         values.append(discordid)
-                        dbquery(query,values)
-                        logmsg(logfile,'info','created entry in discordusers db for discordid '+str(discordid))
-                    else:
-                        logmsg(logfile,'debug','discordid already exists in discordusers db')
+                        discordusers=dbquery(query,values)
+                        logmsg(logfile,'debug','discordusers: '+str(discordusers))
 
-                    # get discorduser id
-                    query="SELECT id FROM discordusers WHERE discordid = %s LIMIT 1"
-                    values=[]
-                    values.append(discordid)
-                    discordusers=dbquery(query,values)
-                    discordusers_id=discordusers['rows'][0]['id']
+                        # add discorduser if it does not exist
+                        if discordusers['rowcount']==0:
+                            logmsg(logfile,'debug','discordid not found in discordusers db')
+                            query="INSERT INTO discordusers (discordid) VALUES (%s)"
+                            values=[]
+                            values.append(discordid)
+                            dbquery(query,values)
+                            logmsg(logfile,'info','created entry in discordusers db for discordid '+str(discordid))
+                        else:
+                            logmsg(logfile,'debug','discordid already exists in discordusers db')
 
-                    # check if steamuser and discorduser are already registered
-                    logmsg(logfile,'debug','checking if entry in register db exists')
-                    query="SELECT id FROM register WHERE steamusers_id = %s AND discordusers_id = %s LIMIT 1"
-                    values=[]
-                    values.append(steamusers_id)
-                    values.append(discordusers_id)
-                    register=dbquery(query,values)
+                        # get discorduser id
+                        query="SELECT id FROM discordusers WHERE discordid = %s LIMIT 1"
+                        values=[]
+                        values.append(discordid)
+                        discordusers=dbquery(query,values)
+                        discordusers_id=discordusers['rows'][0]['id']
 
-                    # if discorduser is not registered with given steamuser, check if there is another steamid64
-                    if register['rowcount']==0:
-                        logmsg(logfile,'debug','checking if discorduser is known with another steamuser')
-                        query="SELECT id FROM register WHERE NOT steamusers_id = %s AND discordusers_id = %s LIMIT 1"
+                        # check if steamuser and discorduser are already registered
+                        logmsg(logfile,'debug','checking if entry in register db exists')
+                        query="SELECT id FROM register WHERE steamusers_id = %s AND discordusers_id = %s LIMIT 1"
                         values=[]
                         values.append(steamusers_id)
                         values.append(discordusers_id)
                         register=dbquery(query,values)
 
-                        # if discorduser is not registered with a different steamid64, add new entry in register
+                        # if discorduser is not registered with given steamuser, check if there is another steamid64
                         if register['rowcount']==0:
-                            logmsg(logfile,'debug','not entry found in register db')
-                            query="INSERT INTO register (steamusers_id,discordusers_id) VALUES (%s,%s)"
+                            logmsg(logfile,'debug','checking if discorduser is known with another steamuser')
+                            query="SELECT id FROM register WHERE NOT steamusers_id = %s AND discordusers_id = %s LIMIT 1"
                             values=[]
                             values.append(steamusers_id)
                             values.append(discordusers_id)
-                            dbquery(query,values)
-                            logmsg(logfile,'info','registered steamid64 '+str(steamid64)+' with discordid ('+str(discordid)+')')
-                            response='registered steamid64 ('+str(steamid64)+') with discordid ('+str(discordid)+')'
+                            register=dbquery(query,values)
+
+                            # if discorduser is not registered with a different steamid64, add new entry in register
+                            if register['rowcount']==0:
+                                logmsg(logfile,'debug','not entry found in register db')
+                                query="INSERT INTO register (steamusers_id,discordusers_id) VALUES (%s,%s)"
+                                values=[]
+                                values.append(steamusers_id)
+                                values.append(discordusers_id)
+                                dbquery(query,values)
+                                logmsg(logfile,'info','registered steamid64 '+str(steamid64)+' with discordid ('+str(discordid)+')')
+                                response='registered steamid64 ('+str(steamid64)+') with discordid ('+str(discordid)+')'
+                            else:
+                                # discorduser is registered with a different steamid64
+                                register_id=register['rows'][0]['id']
+                                logmsg(logfile,'warn','entry found in register db discordusers_id ('+str(discordusers_id)+') with id ('+str(register_id)+'), but with a different steamid64')
+                                response='already registered discordusers_id ('+str(discordusers_id)+') as id ('+str(register_id)+'), but with a different steamid64'
                         else:
-                            # discorduser is registered with a different steamid64
+                            # discorduser is already registered with given steamid64
                             register_id=register['rows'][0]['id']
-                            logmsg(logfile,'warn','entry found in register db discordusers_id ('+str(discordusers_id)+') with id ('+str(register_id)+'), but with a different steamid64')
-                            response='already registered discordusers_id ('+str(discordusers_id)+') as id ('+str(register_id)+'), but with a different steamid64'
+                            logmsg(logfile,'warn','entry found in register db for steamusers_id ('+str(steamusers_id)+') and discordusers_id ('+str(discordusers_id)+') with id ('+str(register_id)+')')
+                            response='already registered steamusers_id ('+str(steamusers_id)+') with discordusers_id ('+str(discordusers_id)+') as id ('+str(register_id)+')'
                     else:
-                        # discorduser is already registered with given steamid64
-                        register_id=register['rows'][0]['id']
-                        logmsg(logfile,'warn','entry found in register db for steamusers_id ('+str(steamusers_id)+') and discordusers_id ('+str(discordusers_id)+') with id ('+str(register_id)+')')
-                        response='already registered steamusers_id ('+str(steamusers_id)+') with discordusers_id ('+str(discordusers_id)+') as id ('+str(register_id)+')'
-                else:
-                    # missing parameters
-                    logmsg(logfile,'warn','missing parameter')
-                    response='missing parameter - use !help for more info'
+                        # missing parameters
+                        logmsg(logfile,'warn','missing parameter')
+                        response='missing parameter - use !help for more info'
 
-            case '!unregister':
-                if paramsgiven:
-                    user_message_split=user_message.split(' ',2)
-                    db_param=user_message_split[1]
-                    steamid64=db_param
-                    discordid=message.author.id
-                    logmsg(logfile,'debug','deleting entry in register for discorduser')
+                case '!unregister':
+                    if paramsgiven:
+                        user_message_split=user_message.split(' ',2)
+                        db_param=user_message_split[1]
+                        steamid64=db_param
+                        discordid=message.author.id
+                        logmsg(logfile,'debug','deleting entry in register for discorduser')
 
-                    # get discorduser id
+                        # get discorduser id
+                        query="SELECT id FROM discordusers WHERE discordid=%s LIMIT 1"
+                        values=[]
+                        values.append(discordid)
+                        discordusers=dbquery(query,values)
+
+                        if discordusers['rowcount']==0:
+                            # actually delete
+                            discordusers_id=discordusers['rows'][0]['id']
+                            query="DELETE FROM register WHERE discordusers_id = %s LIMIT 1"
+                            values=[]
+                            values.append(discordusers_id)
+                            register=dbquery(query,values)
+                            logmsg(logfile,'info','deleted entry in register for given discorduser: '+str(discordid)+')')
+                            response='deleted entry in register for given discorduser: '+str(discordid)+')'
+                        else:
+                            # could not find discorduser with given discordid
+                            logmsg(logfile,'warn','could not find discorduser in discordusers db')
+                            response='could not find discorduser in discordusers db'
+                    else:
+                        # missing parameters
+                        logmsg(logfile,'warn','missing parameter')
+                        response='missing parameter - use !help for more info'
+
+                case '!getstats':
+                    discordid=str(message.author.id)
+
+                    # get id from discordusers db
                     query="SELECT id FROM discordusers WHERE discordid=%s LIMIT 1"
                     values=[]
                     values.append(discordid)
                     discordusers=dbquery(query,values)
-
                     if discordusers['rowcount']==0:
-                        # actually delete
+                        # discorduser does not exist
+                        logmsg(logfile,'warn','discordid not registered')
+                        response='discordid not registered - use !help for more info'
+                    else:
+                        # discorduser exists
                         discordusers_id=discordusers['rows'][0]['id']
-                        query="DELETE FROM register WHERE discordusers_id = %s LIMIT 1"
+
+                        # get id for steamuser from register db
+                        query="SELECT steamusers_id FROM register WHERE discordusers_id=%s LIMIT 1"
                         values=[]
                         values.append(discordusers_id)
                         register=dbquery(query,values)
-                        logmsg(logfile,'info','deleted entry in register for given discorduser: '+str(discordid)+')')
-                        response='deleted entry in register for given discorduser: '+str(discordid)+')'
+                        steamusers_id=register['rows'][0]['steamusers_id']
+
+                        # get steamusers steamid64
+                        query="SELECT steamid64 FROM steamusers WHERE id=%s LIMIT 1"
+                        values=[]
+                        values.append(steamusers_id)
+                        steamusers=dbquery(query,values)
+                        steamusers_steamid64=steamusers['rows'][0]['steamid64']
+
+                        # get steamusers details
+                        #query="SELECT ... FROM steamusers_details WHERE steamusers_id=%s LIMIT 1"
+                        #values=[]
+                        #values.append(steamusers_id)
+                        #steamusers_details=dbquery(query,values)
+                        #...
+
+                        # get averages for steamuser from stats db
+                        query="SELECT kills,deaths,average,score,ping"
+                        query+=",AVG(kills) as avg_kills,AVG(deaths) as avg_deaths,AVG(average) as avg_average,AVG(score) as avg_score,AVG(ping) as avg_ping"
+                        query+=",MIN(kills) as min_kills,MIN(deaths) as min_deaths,MIN(average) as min_average,MIN(score) as min_score,MIN(ping) as min_ping"
+                        query+=",MAX(kills) as max_kills,MAX(deaths) as max_deaths,MAX(average) as max_average,MAX(score) as max_score,MAX(ping) as max_ping"
+                        query+=" FROM stats WHERE gamemode='SND' AND steamusers_id=%s "
+                        query+="AND matchended IS TRUE AND playercount=10 "
+                        query+="ORDER BY timestamp ASC"
+                        values=[]
+                        values.append(steamusers_id)
+                        stats=dbquery(query,values)
+                        logmsg(logfile,'debug','stats: '+str(stats))
+
+                        # get all entries for steamuser (for rowcount)
+                        query="SELECT id FROM stats WHERE gamemode='SND' AND steamusers_id=%s "
+                        query+="AND matchended IS TRUE AND playercount=10 "
+                        query+="ORDER BY timestamp ASC"
+                        values=[]
+                        values.append(steamusers_id)
+                        all_stats=dbquery(query,values)
+
+                        limit_stats=2
+                        if all_stats['rowcount']<limit_stats:
+                            # not enough stats
+                            logmsg(logfile,'info','not enough data to generate stats ('+str(all_stats['rowcount'])+')')
+                            response='not enough data to generate stats ('+str(all_stats['rowcount'])+')'
+                        else:
+                            parts=[
+                                user_message+': successful\n'
+                                'Entries found for player '+str(steamusers_steamid64)+' (steamid64): '+str(all_stats['rowcount']),
+                                'AVG Score: '+str(stats['rows'][0]['avg_score']),
+                                'AVG KDR: '+str(stats['rows'][0]['avg_average']),
+                                'AVG Kills: '+str(stats['rows'][0]['avg_kills']),
+                                'AVG Deaths: '+str(stats['rows'][0]['avg_deaths']),
+                                'AVG Ping: '+str(stats['rows'][0]['avg_ping'])
+                            ]
+                            response=''
+                            for part in parts:
+                                response=response+'\n'+part
+
+                case '!getrank':
+                    discordid=str(message.author.id)
+
+                    # get id from discordusers db
+                    query="SELECT id FROM discordusers WHERE discordid=%s LIMIT 1"
+                    values=[]
+                    values.append(discordid)
+                    discordusers=dbquery(query,values)
+                    if discordusers['rowcount']==0:
+                        # discorduser does not exist
+                        logmsg(logfile,'warn','discordid not registered')
+                        response='discordid not registered - use !help for more info'
                     else:
-                        # could not find discorduser with given discordid
-                        logmsg(logfile,'warn','could not find discorduser in discordusers db')
-                        response='could not find discorduser in discordusers db'
-                else:
-                    # missing parameters
-                    logmsg(logfile,'warn','missing parameter')
-                    response='missing parameter - use !help for more info'
+                        # discorduser exists
+                        discordusers_id=discordusers['rows'][0]['id']
 
-            case '!getstats':
-                discordid=str(message.author.id)
+                        # get id for steamuser from register db
+                        query="SELECT steamusers_id FROM register WHERE discordusers_id=%s LIMIT 1"
+                        values=[]
+                        values.append(discordusers_id)
+                        register=dbquery(query,values)
+                        steamusers_id=register['rows'][0]['steamusers_id']
 
-                # get id from discordusers db
-                query="SELECT id FROM discordusers WHERE discordid=%s LIMIT 1"
-                values=[]
-                values.append(discordid)
-                discordusers=dbquery(query,values)
-                if discordusers['rowcount']==0:
-                    # discorduser does not exist
-                    logmsg(logfile,'warn','discordid not registered')
-                    response='discordid not registered - use !help for more info'
-                else:
-                    # discorduser exists
-                    discordusers_id=discordusers['rows'][0]['id']
+                        # get rank for steamuser from ranks db
+                        query="SELECT rank,title FROM ranks WHERE steamusers_id=%s LIMIT 1"
+                        values=[]
+                        values.append(steamusers_id)
+                        ranks=dbquery(query,values)
 
-                    # get id for steamuser from register db
-                    query="SELECT steamusers_id FROM register WHERE discordusers_id=%s LIMIT 1"
-                    values=[]
-                    values.append(discordusers_id)
-                    register=dbquery(query,values)
-                    steamusers_id=register['rows'][0]['steamusers_id']
+                        if ranks['rowcount']==0:
+                            # no rank found
+                            logmsg(logfile,'warn','no rank found')
+                            response='no rank found - maybe because there are not enough stats to generate them - use !getstats to show your stats'
+                        else:
+                            rank=ranks['rows'][0]['rank']
+                            title=ranks['rows'][0]['title']
+                            parts=[
+                                user_message+': successful\n'
+                                'rank: '+str(rank),
+                                'title: '+str(title)]
+                            response=''
+                            for part in parts:
+                                response=response+'\n'+part
 
-                    # get steamusers steamid64
-                    query="SELECT steamid64 FROM steamusers WHERE id=%s LIMIT 1"
-                    values=[]
-                    values.append(steamusers_id)
-                    steamusers=dbquery(query,values)
-                    steamusers_steamid64=steamusers['rows'][0]['steamid64']
-
-                    # get steamusers details
-                    #query="SELECT ... FROM steamusers_details WHERE steamusers_id=%s LIMIT 1"
-                    #values=[]
-                    #values.append(steamusers_id)
-                    #steamusers_details=dbquery(query,values)
-                    #...
-
-                    # get averages for steamuser from stats db
-                    query="SELECT kills,deaths,average,score,ping"
-                    query+=",AVG(kills) as avg_kills,AVG(deaths) as avg_deaths,AVG(average) as avg_average,AVG(score) as avg_score,AVG(ping) as avg_ping"
-                    query+=",MIN(kills) as min_kills,MIN(deaths) as min_deaths,MIN(average) as min_average,MIN(score) as min_score,MIN(ping) as min_ping"
-                    query+=",MAX(kills) as max_kills,MAX(deaths) as max_deaths,MAX(average) as max_average,MAX(score) as max_score,MAX(ping) as max_ping"
-                    query+=" FROM stats WHERE gamemode='SND' AND steamusers_id=%s "
-                    query+="AND matchended IS TRUE AND playercount=10 "
-                    query+="ORDER BY timestamp ASC"
-                    values=[]
-                    values.append(steamusers_id)
-                    stats=dbquery(query,values)
-                    logmsg(logfile,'debug','stats: '+str(stats))
-
-                    # get all entries for steamuser (for rowcount)
-                    query="SELECT id FROM stats WHERE gamemode='SND' AND steamusers_id=%s "
-                    query+="AND matchended IS TRUE AND playercount=10 "
-                    query+="ORDER BY timestamp ASC"
-                    values=[]
-                    values.append(steamusers_id)
-                    all_stats=dbquery(query,values)
-
-                    limit_stats=2
-                    if all_stats['rowcount']<limit_stats:
-                        # not enough stats
-                        logmsg(logfile,'info','not enough data to generate stats ('+str(all_stats['rowcount'])+')')
-                        response='not enough data to generate stats ('+str(all_stats['rowcount'])+')'
-                    else:
-                        parts=[
-                            user_message+': successful\n'
-                            'Entries found for player '+str(steamusers_steamid64)+' (steamid64): '+str(all_stats['rowcount']),
-                            'AVG Score: '+str(stats['rows'][0]['avg_score']),
-                            'AVG KDR: '+str(stats['rows'][0]['avg_average']),
-                            'AVG Kills: '+str(stats['rows'][0]['avg_kills']),
-                            'AVG Deaths: '+str(stats['rows'][0]['avg_deaths']),
-                            'AVG Ping: '+str(stats['rows'][0]['avg_ping'])
-                        ]
-                        response=''
-                        for part in parts:
-                            response=response+'\n'+part
-
-            case '!getrank':
-                discordid=str(message.author.id)
-
-                # get id from discordusers db
-                query="SELECT id FROM discordusers WHERE discordid=%s LIMIT 1"
-                values=[]
-                values.append(discordid)
-                discordusers=dbquery(query,values)
-                if discordusers['rowcount']==0:
-                    # discorduser does not exist
-                    logmsg(logfile,'warn','discordid not registered')
-                    response='discordid not registered - use !help for more info'
-                else:
-                    # discorduser exists
-                    discordusers_id=discordusers['rows'][0]['id']
-
-                    # get id for steamuser from register db
-                    query="SELECT steamusers_id FROM register WHERE discordusers_id=%s LIMIT 1"
-                    values=[]
-                    values.append(discordusers_id)
-                    register=dbquery(query,values)
-                    steamusers_id=register['rows'][0]['steamusers_id']
-
-                    # get rank for steamuser from ranks db
-                    query="SELECT rank,title FROM ranks WHERE steamusers_id=%s LIMIT 1"
-                    values=[]
-                    values.append(steamusers_id)
-                    ranks=dbquery(query,values)
-
-                    if ranks['rowcount']==0:
-                        # no rank found
-                        logmsg(logfile,'warn','no rank found')
-                        response='no rank found - maybe because there are not enough stats to generate them - use !getstats to show your stats'
-                    else:
-                        rank=ranks['rows'][0]['rank']
-                        title=ranks['rows'][0]['title']
-                        parts=[
-                            user_message+': successful\n'
-                            'rank: '+str(rank),
-                            'title: '+str(title)]
-                        response=''
-                        for part in parts:
-                            response=response+'\n'+part
-
-    else: # access denied
-        logmsg(logfile,'warn','missing access rights for command: '+str(command))
-        response='missing access rights for command: '+str(command)+' - use !help for more info'
+        else: # access denied
+            logmsg(logfile,'warn','missing access rights for command: '+str(command))
+            response='missing access rights for command: '+str(command)+' - use !help for more info'
     return response
