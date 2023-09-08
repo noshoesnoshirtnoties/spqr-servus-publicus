@@ -594,9 +594,9 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                                 '',
                                 'Entries found for player '+str(steamusers_steamid64)+': '+str(all_stats['rowcount']),
                                 'AVG Score: '+str(stats['rows'][0]['avg_score']),
-                                'AVG Assists: '+str(stats['rows'][0]['avg_assists']),
                                 'AVG Kills: '+str(stats['rows'][0]['avg_kills']),
                                 'AVG Deaths: '+str(stats['rows'][0]['avg_deaths']),
+                                'AVG Assists: '+str(stats['rows'][0]['avg_assists']),
                                 'AVG Ping: '+str(stats['rows'][0]['avg_ping'])
                             ]
                             response=''
