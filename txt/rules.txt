@@ -3,5 +3,5 @@
 > use a unique (!) reaction on an event entry in #g-matches to sign up
 > only sign up if you will be there, no-showing will be punished
 > show up in time, dont make people wait
-> if you cant make it, remove your signup reaction asap and pls write in #chat if its a close call so there is a chance to find a replacement in time
+> if you cant make it, remove your signup (and pls write in #chat if its a close call)
 ```
