@@ -17,6 +17,9 @@ general purpose bot for the spqr discord server
   * mysql-connector
 
 ## todo (aside from finding and fixing bugs and improving the code in general)
+* add cronjob(s) for event management
+* add !listevents, !addevent, !delevent
+* add !createteams (...and therefore make !register a requirement?)
 * add !modlist, !blacklist, !pings
 * allow map aliases for !setmap
 * auto-message new discord users

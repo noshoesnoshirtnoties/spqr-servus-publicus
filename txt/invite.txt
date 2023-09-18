@@ -1,15 +1,16 @@
-:crossed_swords: **Join SPQR** :crossed_swords: 
+:crossed_swords: **SPQR** :crossed_swords: 
 
 <https://youtu.be/BhbUxZ4lubk>
 
-SPQR is a PCVR/PS5VR EU-only SND 5v5 ranked matchup format for adult, experienced players (active all week, prime time is 18 to 22 UTC).
+PCVR/PS5VR EU-only SND 5v5 ranked matchup format for adult, experienced players (active all week, prime time is 18 to 22 UTC).
 
 **SPQR Gladiator Requirements:**
+```
 - english-speaking
 - adults only (be nice and act responsibly)
 - a certain amount of skill (to enable teamplay)
-- decent internet connection to EU servers is required (50ms ping soft limit, 60ms ping hard limit, normal stability)
-
+- decent internet connection to EU servers (limit 70ms average)
+```
 if this sounds like what you are looking for, please join and contact a member with the orange "SPQR Senate" role for more information.
 
 https://discord.gg/5k2wYcytXf
