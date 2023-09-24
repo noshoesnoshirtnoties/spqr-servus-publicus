@@ -1,5 +1,7 @@
 # spqr-servus-publicus
-general purpose bot for the spqr discord server
+general purpose bot for the spqr discord server.
+
+meant to work in coop with https://github.com/noshoesnoshirtnoties/spqr-pavlov-srvmon
 
 ## usage description
 * clone this repo to your workstation
@@ -21,6 +23,8 @@ general purpose bot for the spqr discord server
 * add !listevents, !addevent, !delevent
 * add !createteams (...and therefore make !register a requirement?)
 * add !modlist, !blacklist, !pings
+* get top ranks and write them to an updated message in #stats
+* add elo/mmr as a (second; at least for now) ranking system
 * allow map aliases for !setmap
 * auto-message new discord users
 * pull user access rights from roles
