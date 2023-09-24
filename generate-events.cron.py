@@ -1,5 +1,8 @@
 import json
 import mysql.connector
+import discord
+import datetime
+import time
 
 if __name__ == '__main__':
     env='live'
@@ -30,9 +33,54 @@ if __name__ == '__main__':
         conn.close()
         return data
 
-    # get all events
+    # get all currnetly planned events
     query="SELECT * FROM events ORDER BY id ASC"
     values=[]
     events=dbquery(query,values)
-    print('[DEBUG] events: '+str(events))
-    #...
+    
+    # init discord
+    intents=discord.Intents.default()
+    intents.message_content=True
+    client=discord.Client(intents=intents)
+
+    @client.event
+    async def on_ready():
+        channelid=config['bot-channel-ids']['g-matches']
+        if events['rowcount']>0:
+            for row in events['rows']:
+                channel=client.get_channel(int(channelid))
+                response=row['text']
+                try:
+                    await channel.send(response)
+                except Exception as e:
+                    print('[ERROR] '+str(e))
+        await client.close()
+
+    client.run(config['bot_token'])
+
+    # delete all currently planned events
+    query="DELETE FROM events"
+    values=[]
+    dbquery(query,values)
+    
+    # add new events for upcoming week
+    current=datetime.datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=0)
+    unix=time.mktime(current.timetuple())
+
+    tue=unix + (2 * 86400) + (19 * 3600)
+    wed=unix + (3 * 86400) + (18 * 3600)
+    thu=unix + (4 * 86400) + (19 * 3600)
+    sat=unix + (6 * 86400) + (18 * 3600)
+
+    new_events=[
+        str(int(tue)),str(int(wed)),str(int(thu)),str(int(sat))
+    ]
+
+    for new_event in new_events:
+        event_text='<t:'+new_event+':F>, <t:'+new_event+':R>'
+        query="INSERT INTO events (text) VALUES (%s)"
+        values=[]
+        values.append(event_text)
+        dbquery(query,values)
+
+    exit()

@@ -1,5 +1,5 @@
 import json
-import mysql.connector
+import discord
 
 if __name__ == '__main__':
     env='live'
@@ -7,32 +7,26 @@ if __name__ == '__main__':
     # read config
     config = json.loads(open('config.json').read())[env]
 
-    def dbquery(query,values):
-        conn=mysql.connector.connect(
-            host=config['mysqlhost'],
-            port=config['mysqlport'],
-            user=config['mysqluser'],
-            password=config['mysqlpass'],
-            database=config['mysqldatabase'])
-        cursor=conn.cursor(buffered=True,dictionary=True)
-        cursor.execute(query,(values))
-        conn.commit()
-        data={}
-        data['rowcount']=cursor.rowcount
-        query_type0=query.split(' ',2)
-        query_type=str(query_type0[0])
+    # init discord
+    intents=discord.Intents.default()
+    intents.message_content=True
+    client=discord.Client(intents=intents)
 
-        if query_type.upper()=="SELECT":
-            data['rows']=cursor.fetchall()
-        else:
-            data['rows']=False
-        cursor.close()
-        conn.close()
-        return data
+    @client.event
+    async def on_ready():
+        channelid=config['bot-channel-ids']['news']
+        channel=client.get_channel(int(channelid))
 
-    # get all events
-    query="SELECT * FROM events ORDER BY id ASC"
-    values=[]
-    events=dbquery(query,values)
-    print('[DEBUG] events: '+str(events))
-    #...
+        gladiator=config['role-ids']['gladiator']
+        tiro=config['role-ids']['tiro']
+        gmatches=config['bot-channel-ids']['g-matches']
+        response='<@&'+str(gladiator)+'> <@&'+str(tiro)+'> weekly reminder, come play <#'+str(gmatches)+'> :crossed_swords: :shield:'
+
+        try:
+            await channel.send(response)
+        except Exception as e:
+            print('[ERROR] '+str(e))
+        await client.close()
+
+    client.run(config['bot_token'])
+    exit()

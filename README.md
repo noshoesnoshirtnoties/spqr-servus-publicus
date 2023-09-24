@@ -19,8 +19,7 @@ meant to work in coop with https://github.com/noshoesnoshirtnoties/spqr-pavlov-s
   * mysql-connector
 
 ## todo (aside from finding and fixing bugs and improving the code in general)
-* add cronjob(s) for event management
-* add !listevents, !addevent, !delevent
+* add event message cleanup to generate-events.cron.py
 * add !createteams (...and therefore make !register a requirement?)
 * add !modlist, !blacklist, !pings
 * get top ranks and write them to an updated message in #stats
