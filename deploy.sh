@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=1.2.0
+VERSION=1.3.0
 SUBJECT=deploy
 USAGE="Usage: $0 -d dsthost -u sshuser -v\n
 -d destination host\n
@@ -63,6 +63,7 @@ FILES=(
   "responses.py"
   "generate-ranks.cron.py"
   "generate-events.cron.py"
+  "generate-reminder.cron.py"
 )
 
 if [ ! -n "${DSTHOST}" ]; then
@@ -95,6 +96,9 @@ $SSH $DSTHOST "/usr/bin/chmod 664 /etc/cron.d/generate-ranks.cron; /usr/bin/chow
 
 $SCP "generate-events.cron" "${SSHUSER}@${DSTHOST}:/etc/cron.d/generate-events.cron"
 $SSH $DSTHOST "/usr/bin/chmod 664 /etc/cron.d/generate-events.cron; /usr/bin/chown spqr:root /etc/cron.d/generate-events.cron"
+
+$SCP "generate-reminder.cron" "${SSHUSER}@${DSTHOST}:/etc/cron.d/generate-reminder.cron"
+$SSH $DSTHOST "/usr/bin/chmod 664 /etc/cron.d/generate-reminder.cron; /usr/bin/chown spqr:root /etc/cron.d/generate-reminder.cron"
 
 $SCP "${SERVICENAME}.service" "${SSHUSER}@${DSTHOST}:/etc/systemd/system/${SERVICENAME}.service"
 $SSH $DSTHOST "/usr/bin/chmod 664 /etc/systemd/system/${SERVICENAME}.service; /usr/bin/chown root:root /etc/systemd/system/${SERVICENAME}.service"
