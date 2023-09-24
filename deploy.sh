@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=1.1.1
+VERSION=1.2.0
 SUBJECT=deploy
 USAGE="Usage: $0 -d dsthost -u sshuser -v\n
 -d destination host\n
@@ -90,11 +90,11 @@ for FILE in "${FILES[@]}"; do
   $SSH $DSTHOST "/usr/bin/chmod 664 ${SERVICEHOME}/${FILE}; /usr/bin/chown ${SERVICEUSER}:${SERVICEUSER} ${SERVICEHOME}/${FILE}"
 done
 
-$SCP "generate-ranks.cron.sh" "${SSHUSER}@${DSTHOST}:/etc/cron.d/generate-ranks.cron.sh"
-$SSH $DSTHOST "/usr/bin/chmod 775 /etc/cron.d/generate-ranks.cron.sh; /usr/bin/chown spqr:root /etc/cron.d/generate-ranks.cron.sh"
+$SCP "generate-ranks.cron" "${SSHUSER}@${DSTHOST}:/etc/cron.d/generate-ranks.cron"
+$SSH $DSTHOST "/usr/bin/chmod 664 /etc/cron.d/generate-ranks.cron; /usr/bin/chown spqr:root /etc/cron.d/generate-ranks.cron"
 
-$SCP "generate-events.cron.sh" "${SSHUSER}@${DSTHOST}:/etc/cron.d/generate-events.cron.sh"
-$SSH $DSTHOST "/usr/bin/chmod 775 /etc/cron.d/generate-events.cron.sh; /usr/bin/chown spqr:root /etc/cron.d/generate-events.cron.sh"
+$SCP "generate-events.cron" "${SSHUSER}@${DSTHOST}:/etc/cron.d/generate-events.cron"
+$SSH $DSTHOST "/usr/bin/chmod 664 /etc/cron.d/generate-events.cron; /usr/bin/chown spqr:root /etc/cron.d/generate-events.cron"
 
 $SCP "${SERVICENAME}.service" "${SSHUSER}@${DSTHOST}:/etc/systemd/system/${SERVICENAME}.service"
 $SSH $DSTHOST "/usr/bin/chmod 664 /etc/systemd/system/${SERVICENAME}.service; /usr/bin/chown root:root /etc/systemd/system/${SERVICENAME}.service"
