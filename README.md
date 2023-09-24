@@ -32,6 +32,7 @@ meant to work in coop with https://github.com/noshoesnoshirtnoties/spqr-pavlov-s
 * pull bot-channel-ids from discord directly
   * alternatively: pull them from a specific discord message
 * create logrotate config for the log file
-* make env (main.py) a param
+* make env a param (main.py)
 * remove requirement to access the server as root (deploy.sh)
+* zip/unzip files (deploy.sh)
 * add discord-ui-features (buttons) to trigger commands
