@@ -26,7 +26,6 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                 logfile.debug(msg)
 
     logmsg(logfile,'debug','client: '+str(client))
-    #logmsg(logfile,'debug','message: '+str(message))
     logmsg(logfile,'debug','type(message): '+str(type(message)))
     logmsg(logfile,'info','message.id: '+str(message.id))
     logmsg(logfile,'info','message.channel: '+str(message.channel))
@@ -41,21 +40,15 @@ async def get_response(config,logfile,client,message,user_message,is_private):
         logmsg(logfile,'debug','message.guild.name: '+str(message.guild.name))
     else:
         logmsg(logfile,'debug','message.guild: '+str(message.guild))
-    #logmsg(logfile,'debug','user_message: '+str(user_message))
     logmsg(logfile,'debug','is_private: '+str(is_private))
 
     def dbquery(query,values):
-        #print('[DEBUG] dbquery called')
-        #print('[DEBUG] query: '+str(query))
-        #print('[DEBUG] values: '+str(values))
-        #print('[DEBUG] len(values): '+str(len(values)))
         conn=mysql.connector.connect(
             host=config['mysqlhost'],
             port=config['mysqlport'],
             user=config['mysqluser'],
             password=config['mysqlpass'],
             database=config['mysqldatabase'])
-        #print('[DEBUG] conn: '+str(conn))
         cursor=conn.cursor(buffered=True,dictionary=True)
         cursor.execute(query,(values))
         conn.commit()
@@ -63,7 +56,6 @@ async def get_response(config,logfile,client,message,user_message,is_private):
         data['rowcount']=cursor.rowcount
         query_type0=query.split(' ',2)
         query_type=str(query_type0[0])
-        #print('[DEBUG] query_type: '+query_type)
 
         if query_type.upper()=="SELECT":
             data['rows']=cursor.fetchall()
@@ -72,7 +64,6 @@ async def get_response(config,logfile,client,message,user_message,is_private):
             data['rows']=False
         cursor.close()
         conn.close()
-        #print('[DEBUG] conn and conn closed')
         return data
 
     async def rcon(rconcmd,rconparams):
@@ -151,7 +142,6 @@ async def get_response(config,logfile,client,message,user_message,is_private):
     paramsgiven=False
     user_message_split=user_message.split(' ',2)
     command=user_message_split[0]
-    #logmsg(logfile,'debug','command: '+str(command))
     if str(command)!='': # this seems to occur with system messages (in discord; like in new-arrivals)
         paramsgiven=False
         if len(user_message_split)>1:
@@ -168,11 +158,6 @@ async def get_response(config,logfile,client,message,user_message,is_private):
             if str(id)==str(message.author.id):
                 is_senate=True
                 logmsg(logfile,'info','user has senate role')
-        is_architecti=False
-        for id in config['architecti-member']:
-            if str(id)==str(message.author.id):
-                is_architecti=True
-                logmsg(logfile,'info','user has architecti role')
 
         access_granted=True
         for praefectuscmd in config['praefectus-cmds']:
@@ -185,12 +170,6 @@ async def get_response(config,logfile,client,message,user_message,is_private):
             if senatecmd==command:
                 logmsg(logfile,'info','senate-cmd found')
                 if is_senate is not True:
-                    logmsg(logfile,'warn','missing access rights for command: '+str(command))
-                    access_granted=False
-        for architecticmd in config['architecti-cmds']:
-            if architecticmd==command:
-                logmsg(logfile,'info','architecti-cmd found')
-                if is_architecti is not True:
                     logmsg(logfile,'warn','missing access rights for command: '+str(command))
                     access_granted=False
 
@@ -347,6 +326,53 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                             response=user_message+' successful'
                         else:
                             response=user_message+' something went wrong'
+
+                case '!modlist':
+                    modlist=await rcon('ModeratorList',{})
+                    if modlist['Successful'] is True:
+                        logmsg(logfile,'debug','!modlist successful')
+                        response=user_message+': successful'
+
+                        for part in modlist['ModeratorList']:
+                            response=response+'\n'+str(part)
+                    else:
+                        response=user_message+': something went wrong'
+
+                case '!blacklist':
+                    banlist=await rcon('Banlist',{})
+                    if banlist['Successful'] is True:
+                        logmsg(logfile,'debug','!blacklist successful')
+                        response=user_message+': successful'
+
+                        for part in banlist['BanList']:
+                            response=response+'\n'+str(part)
+                    else:
+                        response=user_message+': something went wrong'
+
+                case '!pings':
+                    inspectall=await rcon('InspectAll',{})
+                    if inspectall['Successful'] is True:
+                        logmsg(logfile,'debug','!inspectall successful')
+                        response=user_message+': successful'
+
+                        for player in inspectall['InspectList']:
+                            steamusers_id=player['UniqueId']
+                            current_ping=player['Ping']
+
+                            # get averages for current player
+                            query="SELECT steamid64,ping,"
+                            query+="AVG(ping) as avg_ping "
+                            query+="FROM pings "
+                            query+="WHERE steamid64 = %s"
+                            values=[]
+                            values.append(steamusers_id)
+                            pings=dbquery(query,values)
+
+                            average_ping=pings['rows'][0]['avg_ping']
+
+                            response=response+'\n'+steamusers_id+': '+str(current_ping)+' (current), '+str(average_ping)+' (average)'
+                    else:
+                        response=user_message+': something went wrong'
 
                 case '!echo':
                     if paramsgiven: # requires 1 param
@@ -649,6 +675,9 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                             response=''
                             for part in parts:
                                 response=response+'\n'+part
+
+                case '!genteams':
+                    response=user_message+' successful, but this command is still WIP'
 
         else: # access denied
             logmsg(logfile,'warn','missing access rights for command: '+str(command))

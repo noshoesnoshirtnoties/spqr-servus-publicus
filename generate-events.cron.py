@@ -73,14 +73,16 @@ if __name__ == '__main__':
     sat=unix + (6 * 86400) + (18 * 3600)
 
     new_events=[
-        str(int(tue)),str(int(wed)),str(int(thu)),str(int(sat))
+        '<t:'+str(int(tue))+':F>, <t:'+str(int(tue))+':R>',
+        '<t:'+str(int(wed))+':F>, <t:'+str(int(wed))+':R>',
+        '<t:'+str(int(thu))+':F>, <t:'+str(int(thu))+':R>',
+        '<t:'+str(int(sat))+':F>, <t:'+str(int(sat))+':R>'
     ]
 
     for new_event in new_events:
-        event_text='<t:'+new_event+':F>, <t:'+new_event+':R>'
         query="INSERT INTO events (text) VALUES (%s)"
         values=[]
-        values.append(event_text)
+        values.append(new_event)
         dbquery(query,values)
 
     exit()

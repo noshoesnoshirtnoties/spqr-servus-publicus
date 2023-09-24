@@ -28,8 +28,12 @@
 !kick <steamid64>       rcon: kick player with given steamid64
 !ban <steamid64>        rcon: ban player with given steamid64
 !unban <steamid64>      rcon: unban player with given steamid64
+!modlist                rcon: outputs list of server admins
+!blacklist              rcon: outputs list of banned players
+!pings                  db: outputs average ping for all current players
 
 ### Senate only
 !writeas <chn> <in>     outputs the input to a given channel
 !unregister <dscrdid>   db: unregisters given discordid
+!genteams <msgid>       db: generates teams with for given discord msg id
 ```

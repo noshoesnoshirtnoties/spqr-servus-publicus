@@ -19,17 +19,14 @@ meant to work in coop with https://github.com/noshoesnoshirtnoties/spqr-pavlov-s
   * mysql-connector
 
 ## todo (aside from finding and fixing bugs and improving the code in general)
+* add !genteams
 * add event message cleanup to generate-events.cron.py
-* add !createteams (...and therefore make !register a requirement?)
-* add !modlist, !blacklist, !pings
 * get top ranks and write them to an updated message in #stats
 * add elo/mmr as a (second; at least for now) ranking system
 * allow map aliases for !setmap
 * auto-message new discord users
 * pull user access rights from roles
-  * alternatively: pull them from specific discord messages
 * pull bot-channel-ids from discord directly
-  * alternatively: pull them from a specific discord message
 * create logrotate config for the log file
 * make env a param (main.py)
 * remove requirement to access the server as root (deploy.sh)

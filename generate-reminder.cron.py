@@ -1,5 +1,8 @@
 import json
 import discord
+import os
+import random
+from pathlib import Path
 
 if __name__ == '__main__':
     env='live'
@@ -17,10 +20,15 @@ if __name__ == '__main__':
         channelid=config['bot-channel-ids']['news']
         channel=client.get_channel(int(channelid))
 
+        # get random quote
+        randomquote=random.choice(os.listdir('txt/suntzu'))
+        quotepath="txt/suntzu/"+randomquote
+        quote=Path(str(quotepath)).read_text()
+
         gladiator=config['role-ids']['gladiator']
         tiro=config['role-ids']['tiro']
         gmatches=config['bot-channel-ids']['g-matches']
-        response='<@&'+str(gladiator)+'> <@&'+str(tiro)+'> weekly reminder, come play <#'+str(gmatches)+'> :crossed_swords: :shield:'
+        response='<@&'+str(gladiator)+'> <@&'+str(tiro)+'> automated reminder: come play <#'+str(gmatches)+'> :crossed_swords: :shield:\n\n'+quote+'\n-SunTzu'
 
         try:
             await channel.send(response)

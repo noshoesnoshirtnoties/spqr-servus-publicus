@@ -18,16 +18,10 @@
       "!writeas",
       "!unregister"
     ],
-    "architecti-cmds":[
-      ""
-    ],
     "praefectus-member":[
       "1234678901234567890"
     ],
     "senate-member":[
-      "1234678901234567890"
-    ],
-    "architecti-member":[
       "1234678901234567890"
     ],
     "bot-channel-ids":{

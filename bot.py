@@ -58,8 +58,6 @@ def run_bot(meta,config):
         username=str(message.author)
         user_message=str(message.content)
         channel=str(message.channel)
-        #logmsg(logfile,'debug',str(username)+' said: "'+str(user_message)+'" in channel: '+str(channel))
-        #logmsg(logfile,'debug','type(user_message): "'+str(type(user_message)))
 
         is_private=False
         if len(user_message)>0:
