@@ -35,5 +35,5 @@
 ### Senate only
 !writeas <chn> <in>     outputs the input to a given channel
 !unregister <dscrdid>   db: unregisters given discordid
-!genteams <msgid>       db: generates teams with for given discord msg id
+!genteams <msgid>       db: generates teams for given discord msg id
 ```
