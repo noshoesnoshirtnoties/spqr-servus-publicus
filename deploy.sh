@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=1.3.0
+VERSION=1.3.1
 SUBJECT=deploy
 USAGE="Usage: $0 -d dsthost -u sshuser -v\n
 -d destination host\n
@@ -61,9 +61,9 @@ FILES=(
   "main.py"
   "bot.py"
   "responses.py"
-  "generate-ranks.cron.py"
-  "generate-events.cron.py"
-  "generate-reminder.cron.py"
+  "generate-ranks-cron.py"
+  "generate-events-cron.py"
+  "generate-reminder-cron.py"
 )
 
 if [ ! -n "${DSTHOST}" ]; then
@@ -91,14 +91,14 @@ for FILE in "${FILES[@]}"; do
   $SSH $DSTHOST "/usr/bin/chmod 664 ${SERVICEHOME}/${FILE}; /usr/bin/chown ${SERVICEUSER}:${SERVICEUSER} ${SERVICEHOME}/${FILE}"
 done
 
-$SCP "generate-ranks.cron" "${SSHUSER}@${DSTHOST}:/etc/cron.d/generate-ranks.cron"
-$SSH $DSTHOST "/usr/bin/chmod 664 /etc/cron.d/generate-ranks.cron; /usr/bin/chown spqr:root /etc/cron.d/generate-ranks.cron"
+$SCP "generate-ranks-cron" "${SSHUSER}@${DSTHOST}:/etc/cron.d/generate-ranks-cron"
+$SSH $DSTHOST "/usr/bin/chmod 664 /etc/cron.d/generate-ranks-cron; /usr/bin/chown spqr:root /etc/cron.d/generate-ranks-cron"
 
-$SCP "generate-events.cron" "${SSHUSER}@${DSTHOST}:/etc/cron.d/generate-events.cron"
-$SSH $DSTHOST "/usr/bin/chmod 664 /etc/cron.d/generate-events.cron; /usr/bin/chown spqr:root /etc/cron.d/generate-events.cron"
+$SCP "generate-events-cron" "${SSHUSER}@${DSTHOST}:/etc/cron.d/generate-events-cron"
+$SSH $DSTHOST "/usr/bin/chmod 664 /etc/cron.d/generate-events-cron; /usr/bin/chown spqr:root /etc/cron.d/generate-events-cron"
 
-$SCP "generate-reminder.cron" "${SSHUSER}@${DSTHOST}:/etc/cron.d/generate-reminder.cron"
-$SSH $DSTHOST "/usr/bin/chmod 664 /etc/cron.d/generate-reminder.cron; /usr/bin/chown spqr:root /etc/cron.d/generate-reminder.cron"
+$SCP "generate-reminder-cron" "${SSHUSER}@${DSTHOST}:/etc/cron.d/generate-reminder-cron"
+$SSH $DSTHOST "/usr/bin/chmod 664 /etc/cron.d/generate-reminder-cron; /usr/bin/chown spqr:root /etc/cron.d/generate-reminder-cron"
 
 $SCP "${SERVICENAME}.service" "${SSHUSER}@${DSTHOST}:/etc/systemd/system/${SERVICENAME}.service"
 $SSH $DSTHOST "/usr/bin/chmod 664 /etc/systemd/system/${SERVICENAME}.service; /usr/bin/chown root:root /etc/systemd/system/${SERVICENAME}.service"
