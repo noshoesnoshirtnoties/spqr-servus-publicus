@@ -67,12 +67,14 @@ if __name__ == '__main__':
     current=datetime.datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=0)
     unix=time.mktime(current.timetuple())
 
+    mon=unix + (1 * 86400) + (18 * 3600)
     tue=unix + (2 * 86400) + (19 * 3600)
     wed=unix + (3 * 86400) + (18 * 3600)
     thu=unix + (4 * 86400) + (19 * 3600)
     sat=unix + (6 * 86400) + (18 * 3600)
 
     new_events=[
+        '<t:'+str(int(mon))+':F>, <t:'+str(int(mon))+':R>',
         '<t:'+str(int(tue))+':F>, <t:'+str(int(tue))+':R>',
         '<t:'+str(int(wed))+':F>, <t:'+str(int(wed))+':R>',
         '<t:'+str(int(thu))+':F>, <t:'+str(int(thu))+':R>',
