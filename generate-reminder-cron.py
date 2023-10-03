@@ -28,7 +28,7 @@ if __name__ == '__main__':
         gladiator=config['role-ids']['gladiator']
         tiro=config['role-ids']['tiro']
         gmatches=config['bot-channel-ids']['g-matches']
-        response='<@&'+str(gladiator)+'> <@&'+str(tiro)+'> **automated reminder**\n:crossed_swords:  come play <#'+str(gmatches)+'>\n\n'+quote+'\n-SunTzu'
+        response='<@&'+str(gladiator)+'> <@&'+str(tiro)+'> **automated reminder**\n\n:crossed_swords:  come play <#'+str(gmatches)+'>\n\n'+quote+'\n-SunTzu'
 
         try:
             await channel.send(response)
