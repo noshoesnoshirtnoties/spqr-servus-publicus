@@ -20,7 +20,7 @@
 !getrank                 outputs rank for current discord user
 !register <steamid64>    registers current discord user with given steamid64
 
-### Praefectus+
+### Praefectus
 !resetsnd                resets snd on server
 !rotatemap               rotates map on server
 !setrandommap            sets random snd map on server
@@ -32,7 +32,7 @@
 !blacklist               outputs list of banned players
 !pings                   outputs average ping for all current players
 
-### Senate+
+### Senate
 !writeas <chn> <in>      outputs the input to a given channel
 !unregister <dscrdusrid> unregisters given discord user id
 !genteams <msgid>        generates teams for given discord msg id
