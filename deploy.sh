@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=1.3.3
+VERSION=1.3.4
 SUBJECT=deploy
 USAGE="Usage: $0 -d dsthost -u sshuser -v\n
 -d destination host\n
@@ -102,6 +102,9 @@ $SSH $DSTHOST "/usr/bin/chmod 644 /etc/cron.d/generate-reminder-cron; /usr/bin/c
 
 $SCP "${SERVICENAME}.service" "${SSHUSER}@${DSTHOST}:/etc/systemd/system/${SERVICENAME}.service"
 $SSH $DSTHOST "/usr/bin/chmod 664 /etc/systemd/system/${SERVICENAME}.service; /usr/bin/chown root:root /etc/systemd/system/${SERVICENAME}.service"
+
+$SCP "spqr-servus-publicus-logrotate" "${SSHUSER}@${DSTHOST}:/etc/logrotate.d/spqr-servus-publicus-logrotate"
+$SSH $DSTHOST "/usr/bin/chmod 644 /etc/logrotate.d/spqr-servus-publicus-logrotate; /usr/bin/chown root:root /etc/logrotate.d/spqr-servus-publicus-logrotate"
 
 if [ $VERBOSE ]; then echo "[INFO] enabling the systemd service"; fi
 $SSH $DSTHOST "/usr/bin/systemctl enable ${SERVICENAME}.service"

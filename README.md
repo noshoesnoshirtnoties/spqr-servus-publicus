@@ -28,7 +28,6 @@ meant to work in coop with https://github.com/noshoesnoshirtnoties/spqr-pavlov-s
 * auto-message new discord users (maybe?)
 * pull user access rights from roles
 * pull bot-channel-ids from discord directly
-* create logrotate config for the log file
 * make env a param (main.py)
 * remove requirement to access the server as root (deploy.sh)
 * zip/unzip files (deploy.sh)
