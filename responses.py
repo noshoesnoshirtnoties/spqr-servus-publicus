@@ -238,7 +238,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                 case '!playerlist':
                     inspectall=await rcon('InspectAll',{})
                     if inspectall['Successful'] is True:
-                        logmsg(logfile,'debug','!inspectall successful')
+                        logmsg(logfile,'debug','!playerlist successful')
                         response=user_message+': successful'
 
                         for player in inspectall['InspectList']:
@@ -352,7 +352,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                 case '!pings':
                     inspectall=await rcon('InspectAll',{})
                     if inspectall['Successful'] is True:
-                        logmsg(logfile,'debug','!inspectall successful')
+                        logmsg(logfile,'debug','!pings successful')
                         response=user_message+': successful'
 
                         for player in inspectall['InspectList']:
