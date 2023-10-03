@@ -20,7 +20,6 @@ meant to work in coop with https://github.com/noshoesnoshirtnoties/spqr-pavlov-s
 
 ## todo (aside from finding and fixing bugs and improving the code in general)
 * add !genteams
-* add event message cleanup
 * get top ranks and write them to an updated message in #stats
 * use map aliases in output of !maplist
 * allow map aliases for !setmap

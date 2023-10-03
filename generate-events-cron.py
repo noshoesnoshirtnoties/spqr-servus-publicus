@@ -33,7 +33,7 @@ if __name__ == '__main__':
         conn.close()
         return data
 
-    # get all currnetly planned events
+    # get all currently planned events
     query="SELECT * FROM events ORDER BY id ASC"
     values=[]
     events=dbquery(query,values)
@@ -46,6 +46,12 @@ if __name__ == '__main__':
     @client.event
     async def on_ready():
         channelid=config['bot-channel-ids']['g-matches']
+
+        # delete old messages
+        async for msg in client.logs_from(channelid):
+            await client.delete_message(msg)
+
+        # add new messages
         if events['rowcount']>0:
             for row in events['rows']:
                 channel=client.get_channel(int(channelid))
