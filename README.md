@@ -20,11 +20,12 @@ meant to work in coop with https://github.com/noshoesnoshirtnoties/spqr-pavlov-s
 
 ## todo (aside from finding and fixing bugs and improving the code in general)
 * add !genteams
-* add event message cleanup to generate-events.cron.py
+* add event message cleanup
 * get top ranks and write them to an updated message in #stats
-* add elo/mmr as a (second; at least for now) ranking system
+* use map aliases in output of !maplist
 * allow map aliases for !setmap
-* auto-message new discord users
+* add elo/mmr as a (second; at least for now) ranking system
+* auto-message new discord users (maybe?)
 * pull user access rights from roles
 * pull bot-channel-ids from discord directly
 * create logrotate config for the log file
