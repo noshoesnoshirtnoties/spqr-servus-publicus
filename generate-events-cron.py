@@ -1,6 +1,7 @@
 import json
 import mysql.connector
 import discord
+from discord.ext import tasks, commands
 import datetime
 import time
 
@@ -33,7 +34,7 @@ if __name__ == '__main__':
         conn.close()
         return data
 
-    # get all currently planned events
+    # get all old events
     query="SELECT * FROM events ORDER BY id ASC"
     values=[]
     events=dbquery(query,values)
@@ -45,16 +46,22 @@ if __name__ == '__main__':
 
     @client.event
     async def on_ready():
-        channelid=config['bot-channel-ids']['g-matches']
+        #channelid=int(config['bot-channel-ids']['e-servus-publicus-bot'])
+        channelid=int(config['bot-channel-ids']['g-matches'])
+        channel=client.get_channel(channelid)
 
         # delete old messages
-        async for msg in client.logs_from(channelid):
-            await client.delete_message(msg)
+        async for message in channel.history(limit=10):
+            messageid=message.id
+            old_message=await channel.fetch_message(messageid)
+            try:
+                await old_message.delete()
+            except Exception as e:
+                print('[ERROR] '+str(e))
 
         # add new messages
         if events['rowcount']>0:
             for row in events['rows']:
-                channel=client.get_channel(int(channelid))
                 response=row['text']
                 try:
                     await channel.send(response)
