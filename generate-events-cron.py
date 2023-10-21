@@ -34,49 +34,12 @@ if __name__ == '__main__':
         conn.close()
         return data
 
-    # get all old events
-    query="SELECT * FROM events ORDER BY id ASC"
-    values=[]
-    events=dbquery(query,values)
-    
-    # init discord
-    intents=discord.Intents.default()
-    intents.message_content=True
-    client=discord.Client(intents=intents)
-
-    @client.event
-    async def on_ready():
-        #channelid=int(config['bot-channel-ids']['e-servus-publicus-bot'])
-        channelid=int(config['bot-channel-ids']['g-matches'])
-        channel=client.get_channel(channelid)
-
-        # delete old messages
-        async for message in channel.history(limit=10):
-            messageid=message.id
-            old_message=await channel.fetch_message(messageid)
-            try:
-                await old_message.delete()
-            except Exception as e:
-                print('[ERROR] '+str(e))
-
-        # add new messages
-        if events['rowcount']>0:
-            for row in events['rows']:
-                response=row['text']
-                try:
-                    await channel.send(response)
-                except Exception as e:
-                    print('[ERROR] '+str(e))
-        await client.close()
-
-    client.run(config['bot_token'])
-
-    # delete all currently planned events
+    # delete old events from db
     query="DELETE FROM events"
     values=[]
     dbquery(query,values)
     
-    # add new events for upcoming week
+    # add new events to db
     current=datetime.datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=0)
     unix=time.mktime(current.timetuple())
 
@@ -99,5 +62,42 @@ if __name__ == '__main__':
         values=[]
         values.append(new_event)
         dbquery(query,values)
+
+    # get new events from db
+    query="SELECT * FROM events ORDER BY id ASC"
+    values=[]
+    events=dbquery(query,values)
+    
+    # init discord
+    intents=discord.Intents.default()
+    intents.message_content=True
+    client=discord.Client(intents=intents)
+
+    @client.event
+    async def on_ready():
+        #channelid=int(config['bot-channel-ids']['e-servus-publicus-bot'])
+        channelid=int(config['bot-channel-ids']['g-matches'])
+        channel=client.get_channel(channelid)
+
+        # delete old events in discord
+        async for message in channel.history(limit=10):
+            messageid=message.id
+            old_message=await channel.fetch_message(messageid)
+            try:
+                await old_message.delete()
+            except Exception as e:
+                print('[ERROR] '+str(e))
+
+        # add new events in discord
+        if events['rowcount']>0:
+            for row in events['rows']:
+                response=row['text']
+                try:
+                    await channel.send(response)
+                except Exception as e:
+                    print('[ERROR] '+str(e))
+        await client.close()
+
+    client.run(config['bot_token'])
 
     exit()
