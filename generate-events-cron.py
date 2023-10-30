@@ -1,5 +1,4 @@
 import json
-import mysql.connector
 import discord
 from discord.ext import tasks, commands
 import datetime
@@ -10,44 +9,22 @@ if __name__ == '__main__':
 
     # read config
     config = json.loads(open('config.json').read())[env]
-
-    def dbquery(query,values):
-        conn=mysql.connector.connect(
-            host=config['mysqlhost'],
-            port=config['mysqlport'],
-            user=config['mysqluser'],
-            password=config['mysqlpass'],
-            database=config['mysqldatabase'])
-        cursor=conn.cursor(buffered=True,dictionary=True)
-        cursor.execute(query,(values))
-        conn.commit()
-        data={}
-        data['rowcount']=cursor.rowcount
-        query_type0=query.split(' ',2)
-        query_type=str(query_type0[0])
-
-        if query_type.upper()=="SELECT":
-            data['rows']=cursor.fetchall()
-        else:
-            data['rows']=False
-        cursor.close()
-        conn.close()
-        return data
-
-    # delete old events from db
-    query="DELETE FROM events"
-    values=[]
-    dbquery(query,values)
     
-    # add new events to db
+    # create new events
     current=datetime.datetime.utcnow().replace(hour=0,minute=0,second=0,microsecond=0)
     unix=time.mktime(current.timetuple())
 
-    mon=unix + (1 * 86400) + (18 * 3600)
-    tue=unix + (2 * 86400) + (19 * 3600)
-    wed=unix + (3 * 86400) + (18 * 3600)
-    thu=unix + (4 * 86400) + (19 * 3600)
-    sat=unix + (6 * 86400) + (18 * 3600)
+    # european summer time (begins at 01:00 UTC/WET (02:00 CET, 03:00 EET) on the last Sunday in March (25 ~ 31 March))
+    #daylight_saving_adjustment=0
+
+    # regular time (begins at 01:00 UTC (02:00 WEST, 03:00 CEST, 04:00 EEST) on the last Sunday in October (25 ~ 31 October))
+    daylight_saving_adjustment=1*3600
+
+    mon=unix + (1 * 86400) + (18 * 3600) + daylight_saving_adjustment
+    tue=unix + (2 * 86400) + (19 * 3600) + daylight_saving_adjustment
+    wed=unix + (3 * 86400) + (18 * 3600) + daylight_saving_adjustment
+    thu=unix + (4 * 86400) + (19 * 3600) + daylight_saving_adjustment
+    sat=unix + (6 * 86400) + (18 * 3600) + daylight_saving_adjustment
 
     new_events=[
         '<t:'+str(int(mon))+':F>, <t:'+str(int(mon))+':R>',
@@ -56,17 +33,6 @@ if __name__ == '__main__':
         '<t:'+str(int(thu))+':F>, <t:'+str(int(thu))+':R>',
         '<t:'+str(int(sat))+':F>, <t:'+str(int(sat))+':R>'
     ]
-
-    for new_event in new_events:
-        query="INSERT INTO events (text) VALUES (%s)"
-        values=[]
-        values.append(new_event)
-        dbquery(query,values)
-
-    # get new events from db
-    query="SELECT * FROM events ORDER BY id ASC"
-    values=[]
-    events=dbquery(query,values)
     
     # init discord
     intents=discord.Intents.default()
@@ -89,13 +55,13 @@ if __name__ == '__main__':
                 print('[ERROR] '+str(e))
 
         # add new events in discord
-        if events['rowcount']>0:
-            for row in events['rows']:
-                response=row['text']
-                try:
-                    await channel.send(response)
-                except Exception as e:
-                    print('[ERROR] '+str(e))
+        for new_event in new_events:
+            try:
+                await channel.send(new_event)
+            except Exception as e:
+                print('[ERROR] '+str(e))
+
+        # close conn
         await client.close()
 
     client.run(config['bot_token'])
