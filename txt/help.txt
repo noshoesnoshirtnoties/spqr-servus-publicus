@@ -5,7 +5,6 @@
 !roles                   outputs spqr roles info
 !reqs                    outputs gladiator requirements
 !rules                   outputs gladiator rules
-!invite                  outputs invite message
 
 !spqr                    outputs spqr translation
 !loremipsum              outputs lorem ipsum
