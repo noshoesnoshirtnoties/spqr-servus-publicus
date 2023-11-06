@@ -185,9 +185,6 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                 case '!loremipsum':
                     response=Path('txt/loremipsum.txt').read_text()
 
-                case '!invite':
-                    response=Path('txt/invite.txt').read_text()
-
                 case '!roles':
                     response=Path('txt/roles.txt').read_text()
 
