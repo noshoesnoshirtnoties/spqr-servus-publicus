@@ -20,14 +20,12 @@ if __name__ == '__main__':
     # regular time (begins at 01:00 UTC (02:00 WEST, 03:00 CEST, 04:00 EEST) on the last Sunday in October (25 ~ 31 October))
     daylight_saving_adjustment=1*3600
 
-    mon=unix + (1 * 86400) + (18 * 3600) + daylight_saving_adjustment
     tue=unix + (2 * 86400) + (19 * 3600) + daylight_saving_adjustment
     wed=unix + (3 * 86400) + (18 * 3600) + daylight_saving_adjustment
     thu=unix + (4 * 86400) + (19 * 3600) + daylight_saving_adjustment
     sat=unix + (6 * 86400) + (18 * 3600) + daylight_saving_adjustment
 
     new_events=[
-        '<t:'+str(int(mon))+':F>, <t:'+str(int(mon))+':R>',
         '<t:'+str(int(tue))+':F>, <t:'+str(int(tue))+':R>',
         '<t:'+str(int(wed))+':F>, <t:'+str(int(wed))+':R>',
         '<t:'+str(int(thu))+':F>, <t:'+str(int(thu))+':R>',
