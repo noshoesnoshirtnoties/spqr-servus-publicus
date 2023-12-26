@@ -5,4 +5,6 @@
 #| | | | +---- day of week (0 - 6) (Sunday=0 or 7)
 #| | | | |
 #* * * * *
-0 3 * * 7 spqr cd /home/spqr/spqr-servus-publicus/ && python3 /home/spqr/spqr-servus-publicus/generate-events-cron.py >/dev/null 2>&1
+
+# deactiveated for xmas and new nye
+#0 3 * * 7 spqr cd /home/spqr/spqr-servus-publicus/ && python3 /home/spqr/spqr-servus-publicus/generate-events-cron.py >/dev/null 2>&1
