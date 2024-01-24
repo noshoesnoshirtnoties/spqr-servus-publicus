@@ -3,12 +3,12 @@ Description=spqr-servus-publicus
 
 [Service]
 Type=simple
-WorkingDirectory=/home/spqr/spqr-servus-publicus
+WorkingDirectory=/home/steam/spqr-servus-publicus
 ExecStart=/usr/bin/python3 main.py
 RestartSec=1
 Restart=always
-User=spqr
-Group=spqr
+User=steam
+Group=steam
 
 [Install]
 WantedBy = multi-user.target
