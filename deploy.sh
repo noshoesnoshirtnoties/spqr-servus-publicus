@@ -64,6 +64,7 @@ FILES=(
   "generate-ranks-cron.py"
   "generate-events-cron.py"
   "generate-reminder-cron.py"
+  "spqr-servus-publicus.log"
 )
 
 if [ ! -n "${DSTHOST}" ]; then
