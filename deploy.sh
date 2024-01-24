@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=1.3.4
+VERSION=1.3.5
 SUBJECT=deploy
 USAGE="Usage: $0 -d dsthost -u sshuser -v\n
 -d destination host\n
@@ -53,7 +53,7 @@ if [ $VERBOSE ]; then echo "[INFO] setting defaults"; fi
 SSH="$(which ssh) -q -o StrictHostKeyChecking=no -A -F /home/${USER}/.ssh/config -l ${SSHUSER} "
 SCP="$(which scp) -F /home/${USER}/.ssh/config "
 SERVICENAME="spqr-servus-publicus"
-SERVICEUSER="spqr"
+SERVICEUSER="steam"
 SERVICEHOME="/home/${SERVICEUSER}/${SERVICENAME}"
 FILES=(
   "meta.json"
@@ -80,7 +80,7 @@ $SSH $DSTHOST "/usr/bin/systemctl stop ${SERVICENAME}.service"
 sleep 3
 
 if [ $VERBOSE ]; then echo "[INFO] installing dependencies"; fi
-$SSH $DSTHOST "sudo su spqr -c 'pip install discord async-pavlov'"
+$SSH $DSTHOST "sudo su steam -c 'pip3 install discord async-pavlov mysql-connector'"
 
 if [ $VERBOSE ]; then echo "[INFO] creating service home"; fi
 $SSH $DSTHOST "mkdir -p ${SERVICEHOME}"
