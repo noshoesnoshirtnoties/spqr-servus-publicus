@@ -5,21 +5,9 @@
     "rconip":"1.2.3.4.",
     "rconport":9100,
     "rconpass":"supersecretrconpassword",
-    "praefectus-cmds":[
-      "!resetsnd",
-      "!rotatemap",
-      "!setmap",
-      "!setrandommap",
-      "!kick",
-      "!ban",
-      "!unban"
-    ],
     "senate-cmds":[
       "!writeas",
       "!unregister"
-    ],
-    "praefectus-member":[
-      "1234678901234567890"
     ],
     "senate-member":[
       "1234678901234567890"
