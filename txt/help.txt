@@ -6,11 +6,6 @@
 !reqs                    outputs gladiator requirements
 !rules                   outputs gladiator rules
 
-!spqr                    outputs spqr translation
-!loremipsum              outputs lorem ipsum
-!suntzu                  outputs random sun tzu quote
-!echo <in>               outputs the input
-
 !serverinfo              outputs server info
 !maplist                 outputs current maplist
 !playerlist              outputs current players
@@ -31,6 +26,11 @@
 !modlist                 outputs list of server admins
 !blacklist               outputs list of banned players
 !pings                   outputs average ping for all current players
+
+!spqr                    outputs spqr translation
+!loremipsum              outputs lorem ipsum
+!suntzu                  outputs random sun tzu quote
+!echo <in>               outputs the input
 
 ### Senate
 !writeas <chn> <in>      outputs the input to a given channel
