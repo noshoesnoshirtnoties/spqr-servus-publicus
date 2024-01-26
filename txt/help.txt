@@ -19,14 +19,15 @@
 !getrank                 outputs rank for current discord user
 !register <steamid64>    registers current discord user with given steamid64
 
-### Praefectus
 !resetsnd                resets snd on server
 !rotatemap               rotates map on server
 !setrandommap            sets random snd map on server
 !setmap <mapugc> <mode>  sets specific map and gamemode on server
+
 !kick <steamid64>        kicks player with given steamid64
 !ban <steamid64>         bans player with given steamid64
 !unban <steamid64>       unbans player with given steamid64
+
 !modlist                 outputs list of server admins
 !blacklist               outputs list of banned players
 !pings                   outputs average ping for all current players
