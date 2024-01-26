@@ -25,6 +25,20 @@ async def get_response(config,logfile,client,message,user_message,is_private):
             case _:
                 logfile.debug(msg)
 
+    async def log_discord(client,channel,message):
+        logmsg(logfile,'debug','log_discord called')
+
+        target_message=message
+        target_channel_id=config['bot-channel-ids'][channel]
+        target_channel=client.get_channel(int(target_channel_id))
+        logmsg(logfile,'debug','target_message: '+str(target_message))
+        logmsg(logfile,'debug','target_channel: '+str(target_channel_id))
+        logmsg(logfile,'debug','target_channel: '+str(target_channel))
+        try:
+            await target_channel.send(target_message)
+        except Exception as e:
+            logmsg(logfile,'debug',str(e))
+
     logmsg(logfile,'debug','client: '+str(client))
     logmsg(logfile,'debug','type(message): '+str(type(message)))
     logmsg(logfile,'info','message.id: '+str(message.id))
@@ -664,6 +678,7 @@ async def get_response(config,logfile,client,message,user_message,is_private):
 
                 case '!genteams':
                     response=user_message+' successful, but this command is still WIP'
+            await log_discord(client,'bot-log','[servus-publicus] command '+str(command)+' has been called by user '+str(message.author.name)+' ('+str(message.author.id)+')')
 
         else: # access denied
             logmsg(logfile,'warn','missing access rights for command: '+str(command))
