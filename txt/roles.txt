@@ -2,7 +2,7 @@
 ```
 > white    SPQR Decurion     no access to the gladiator channels
 > grey     SPQR Amicus       read-only access to the gladiator channels
-> teal     SPQR Tiro         temporary access to the gladiator channels
+> blue     SPQR Tiro         temporary access to the gladiator channels
 > green    SPQR Gladiator    regular access to the gladiator channels
 > orange   SPQR Senate       admin capabilities
 > orange   SPQR Admin        server admin
