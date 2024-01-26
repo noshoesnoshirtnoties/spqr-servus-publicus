@@ -148,11 +148,6 @@ async def get_response(config,logfile,client,message,user_message,is_private):
             logmsg(logfile,'debug','params have been given')
             paramsgiven=True
 
-        is_praefectus=False
-        for id in config['praefectus-member']:
-            if str(id)==str(message.author.id):
-                is_praefectus=True
-                logmsg(logfile,'info','user has praefectus role')
         is_senate=False
         for id in config['senate-member']:
             if str(id)==str(message.author.id):
@@ -160,12 +155,6 @@ async def get_response(config,logfile,client,message,user_message,is_private):
                 logmsg(logfile,'info','user has senate role')
 
         access_granted=True
-        for praefectuscmd in config['praefectus-cmds']:
-            if praefectuscmd==command:
-                logmsg(logfile,'info','praefectus-cmd found')
-                if is_praefectus is not True:
-                    logmsg(logfile,'warn','missing access rights for command: '+str(command))
-                    access_granted=False
         for senatecmd in config['senate-cmds']:
             if senatecmd==command:
                 logmsg(logfile,'info','senate-cmd found')
