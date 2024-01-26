@@ -5,6 +5,12 @@
     "rconip":"1.2.3.4.",
     "rconport":9100,
     "rconpass":"supersecretrconpassword",
+    "mysqlhost":"1.2.3.4",
+    "mysqlport":3306,
+    "mysqldatabase":"mysqldatabase",
+    "mysqluser":"mysqluser",
+    "mysqlpass":"supersecretmysqlpassword",
+    "guild-id":"1234567890123456789",
     "senate-cmds":[
       "!writeas",
       "!unregister"
@@ -15,10 +21,6 @@
     "bot-channel-ids":{
       "name-of-my-fancy-channel":"1234678901234567890"
     },
-    "mysqlhost":"1.2.3.4",
-    "mysqlport":3306,
-    "mysqldatabase":"mysqldatabase",
-    "mysqluser":"mysqluserr",
-    "mysqlpass":"supersecretmysqlpassword"
+    "logfile_path":"/home/steam/pavlovserver/Pavlov/Saved/Logs/Pavlov.log"
   }
 }

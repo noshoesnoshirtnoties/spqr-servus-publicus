@@ -7,6 +7,7 @@ import logging
 import discord
 import random
 import asyncio
+import operator
 from pavlov import PavlovRCON
 import mysql.connector
 from pathlib import Path
@@ -14,6 +15,7 @@ from pavlov import PavlovRCON
 from datetime import datetime,timezone
 
 def run_bot(meta,config):
+
 
     # init logging
     if bool(config['debug'])==True:
@@ -29,7 +31,14 @@ def run_bot(meta,config):
     logfile=logging.getLogger('logfile')
 
 
-    # function: log message
+    # init discord
+    intents=discord.Intents.default()
+    intents.message_content=True
+    intents.members=True
+    client=discord.Client(intents=intents)
+
+
+    # function: log to file
     def logmsg(lvl,msg):
         lvl=lvl.lower()
         match lvl:
@@ -41,12 +50,6 @@ def run_bot(meta,config):
                 logfile.warning(msg)
             case _:
                 logfile.debug(msg)
-
-
-    # init discord
-    intents=discord.Intents.default()
-    intents.message_content=True
-    client=discord.Client(intents=intents)
 
 
     # function: log to discord
@@ -218,13 +221,13 @@ def run_bot(meta,config):
                     command='SetPin'
                     params={'9678'}
                     data=await rcon(command,params)
-                    await log_discord('bot-log','[server-monitor] server pin has been set')
+                    await log_discord('e-bot-log','[server-monitor] server pin has been set')
                 else:
                     logmsg('debug','below limit ('+str(limit)+') - removing pin')
                     command='SetPin'
                     params={''}
                     data=await rcon(command,params)
-                    await log_discord('bot-log','[server-monitor] server pin has been removed')
+                    await log_discord('e-bot-log','[server-monitor] server pin has been removed')
             else:
                 logmsg('warn','cant complete auto-pin because map is rotating')
         else:
@@ -303,33 +306,33 @@ def run_bot(meta,config):
                 if int(avg_ping)>soft_limit:
                     kick_player=False
                     logmsg('warn','ping average ('+str(int(avg_ping))+') exceeds the soft limit ('+str(soft_limit)+')')
-                    await log_discord('bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') exceeds the soft limit ('+str(soft_limit)+') for player: '+str(steamusers_id))
+                    await log_discord('e-bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') exceeds the soft limit ('+str(soft_limit)+') for player: '+str(steamusers_id))
                 else:
                     logmsg('info','ping average ('+str(int(avg_ping))+') is within soft limit ('+str(soft_limit)+')')
-                    await log_discord('bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') is within soft limit ('+str(soft_limit)+') for player: '+str(steamusers_id))
+                    await log_discord('e-bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') is within soft limit ('+str(soft_limit)+') for player: '+str(steamusers_id))
                 if int(avg_ping)>hard_limit:
                     kick_player=True
                     logmsg('warn','ping average ('+str(int(avg_ping))+') exceeds the hard limit ('+str(hard_limit)+')')
-                    await log_discord('bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') exceeds the hard limit ('+str(hard_limit)+') for player: '+str(steamusers_id))
+                    await log_discord('e-bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') exceeds the hard limit ('+str(hard_limit)+') for player: '+str(steamusers_id))
                 else:
                     logmsg('info','ping average ('+str(int(avg_ping))+') is within hard limit ('+str(hard_limit)+')')
-                    await log_discord('bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') is within hard limit ('+str(hard_limit)+') for player: '+str(steamusers_id))
+                    await log_discord('e-bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') is within hard limit ('+str(hard_limit)+') for player: '+str(steamusers_id))
 
                 # check players min-max-delta
                 if int(min_max_delta)>delta_limit:
                     kick_player=False
                     logmsg('warn','ping min-max-delta ('+str(int(min_max_delta))+') exceeds the delta limit ('+str(delta_limit)+')')
-                    await log_discord('bot-log','[server-monitor] ping min-max-delta ('+str(int(min_max_delta))+') exceeds the delta limit ('+str(delta_limit)+') for player: '+str(steamusers_id))
+                    await log_discord('e-bot-log','[server-monitor] ping min-max-delta ('+str(int(min_max_delta))+') exceeds the delta limit ('+str(delta_limit)+') for player: '+str(steamusers_id))
                 else:
                     logmsg('info','ping min-max-delta ('+str(int(min_max_delta))+') is within delta limit ('+str(delta_limit)+')')
-                    await log_discord('bot-log','[server-monitor] ping min-max-delta ('+str(int(min_max_delta))+') is within delta limit ('+str(delta_limit)+') for player: '+str(steamusers_id))
+                    await log_discord('e-bot-log','[server-monitor] ping min-max-delta ('+str(int(min_max_delta))+') is within delta limit ('+str(delta_limit)+') for player: '+str(steamusers_id))
 
                 # kick unless canceled
                 if kick_player is True:
                     if act_on_breach is True:
                         await rcon('Kick',{steamusers_id})
                         logmsg('warn','player ('+str(steamusers_id)+') has been kicked by autokick-highping')
-                        await log_discord('bot-log','[server-monitor] player ('+str(steamusers_id)+') has been kicked by autokick-highping')
+                        await log_discord('e-bot-log','[server-monitor] player ('+str(steamusers_id)+') has been kicked by autokick-highping')
                         delete_data=True
                     else:
                         logmsg('warn','player ('+str(steamusers_id)+') would have been kicked by autokick-highping, but this got canceled')
@@ -440,7 +443,7 @@ def run_bot(meta,config):
                         dbquery(query,values)
 
                     logmsg('info','processed all current players')
-                    await log_discord('bot-log','[server-monitor] stats have been pulled and processed for all current players')
+                    await log_discord('e-bot-log','[server-monitor] stats have been pulled and processed for all current players')
                 else:
                     logmsg('warn','not pulling stats because gamemode is not SND')
             else:
@@ -572,12 +575,12 @@ def run_bot(meta,config):
                 kickplayer0=line.split('KickPlayer ',2)
                 kickplayer=kickplayer0[1]
                 logmsg('info','player kicked: '+str(kickplayer).strip())
-                await log_discord('bot-log','[server-monitor] user '+str(kickplayer).strip()+' has been kicked')
+                await log_discord('e-bot-log','[server-monitor] user '+str(kickplayer).strip()+' has been kicked')
             case 'LogTemp: Rcon: BanPlayer':
                 banplayer0=line.split('BanPlayer ',2)
                 banplayer=banplayer0[1]
                 logmsg('info','player banned: '+str(banplayer).strip())
-                await log_discord('bot-log','[server-monitor] user '+str(banplayer).strip()+' has been banned')
+                await log_discord('e-bot-log','[server-monitor] user '+str(banplayer).strip()+' has been banned')
             case 'BombData':
                 logmsg('info','something happened with the bomb')
                 #asyncio.run(action_autokickhighping())
@@ -654,7 +657,7 @@ def run_bot(meta,config):
 
             if access_granted:
                 logmsg('info','access to command has been granted')
-                await log_discord('bot-log','[servus-publicus] command '+str(command)+' has been called by user '+str(message.author.name)+' ('+str(message.author.id)+')')
+                await log_discord('e-bot-log','[servus-publicus] command '+str(command)+' has been called by user '+str(message.author.name)+' ('+str(message.author.id)+')')
                 match command:
                     case '!help':
                         response=Path('txt/help.txt').read_text()
@@ -855,8 +858,7 @@ def run_bot(meta,config):
                     case '!register':
                         if paramsgiven:
                             user_message_split=user_message.split(' ',2)
-                            db_param=user_message_split[1]
-                            steamid64=db_param
+                            steamid64=user_message_split[1]
                             discordid=message.author.id
 
                             # check if steamuser exists
@@ -1109,7 +1111,128 @@ def run_bot(meta,config):
                                 for part in parts:
                                     response=response+'\n'+part
                     case '!genteams':
-                        response=user_message+' successful, but this command is still WIP'
+                        if paramsgiven:
+                            user_message_split=user_message.split(' ',2)
+                            match_msg_id=user_message_split[1]
+
+                            # get channel by id
+                            chnid=config['bot-channel-ids']['e-bot-commands']
+                            chn=await client.fetch_channel(chnid)
+
+                            # get message by id
+                            match_msg=await chn.fetch_message(match_msg_id)
+
+                            # get guild members for later...
+                            guild=await client.fetch_guild(config['guild-id'])
+
+                            # iterate over reactions
+                            count=0
+                            players=[]
+                            for reaction in match_msg.reactions:
+
+                                # iterate over users of each reaction
+                                async for user in reaction.users():
+
+                                    # iterate over ALL GUILD MEMBERS to find the one with the same name...
+                                    async for member in guild.fetch_members(limit=None):
+                                        if member==user:
+                                            reaction_userid=member.id
+                                            players.append(member.id)
+
+                                count=count+reaction.count
+
+                            if count==10: # 10 players signed up
+                                default_rank=5.5
+                                players_ranked={}
+                                for player in players:
+                                    # get id from discordusers db
+                                    query="SELECT id FROM discordusers WHERE discordid=%s LIMIT 1"
+                                    values=[]
+                                    values.append(player)
+                                    discordusers=dbquery(query,values)
+                                    if discordusers['rowcount']==0: # discorduser does not exist
+                                        players_ranked[player]=default_rank
+                                    else: # discorduser exists
+                                        discordusers_id=discordusers['rows'][0]['id']
+
+                                        # get id for steamuser from register db
+                                        query="SELECT steamusers_id FROM register WHERE discordusers_id=%s LIMIT 1"
+                                        values=[]
+                                        values.append(discordusers_id)
+                                        register=dbquery(query,values)
+                                        steamusers_id=register['rows'][0]['steamusers_id']
+
+                                        # get rank for steamuser from ranks db
+                                        query="SELECT rank,title FROM ranks WHERE steamusers_id=%s LIMIT 1"
+                                        values=[]
+                                        values.append(steamusers_id)
+                                        ranks=dbquery(query,values)
+
+                                        if ranks['rowcount']==0: # no rank found
+                                            players_ranked[player]=default_rank
+                                        else:
+                                            players_ranked[player]=ranks['rows'][0]['rank']
+                                
+                                players_ranked_sorted=dict(sorted(players_ranked.items(),key=operator.itemgetter(1),reverse=True))
+                                logmsg('debug','players_ranked_sorted: '+str(players_ranked_sorted))
+
+                                team1=[]
+                                team2=[]
+                                number=0
+                                for player in players_ranked_sorted:
+                                    match number:
+                                        case 0:
+                                            team1.append(player)
+                                        case 1:
+                                            team2.append(player)
+                                        case 2:
+                                            team1.append(player)
+                                        case 3:
+                                            team2.append(player)
+                                        case 4:
+                                            team2.append(player)
+                                        case 5:
+                                            team1.append(player)
+                                        case 6:
+                                            team2.append(player)
+                                        case 7:
+                                            team1.append(player)
+                                        case 8:
+                                            team2.append(player)
+                                        case 9:
+                                            team1.append(player)
+                                    number+=1
+                                
+                                logmsg('debug','team1: '+str(team1))
+                                logmsg('debug','team2: '+str(team2))
+
+                                part_team1="team 1: "
+                                for player in team1:
+                                    part_team1+="<@"+str(player)+"> "
+                                part_team1+='  starting as T'
+
+                                part_team2="team 2: "
+                                for player in team2:
+                                    part_team2+="<@"+str(player)+"> "
+                                part_team2+='  starting as CT'
+
+                                parts=[
+                                        user_message+': successful\n'
+                                        '',
+                                        str(part_team1),
+                                        str(part_team2)
+                                ]
+                                response=''
+                                for part in parts:
+                                    response=response+'\n'+part
+                            else:
+                                # not enough players
+                                logmsg('warn','not enough players')
+                                response='not enough players to generate teams - need 10'
+                        else:
+                            # missing parameters
+                            logmsg('warn','missing parameter')
+                            response='missing parameter - use !help for more info'
             else: # access denied
                 logmsg('warn','missing access rights for command: '+str(command))
                 response='missing access rights for command: '+str(command)+' - use !help for more info'
@@ -1184,7 +1307,6 @@ def run_bot(meta,config):
         'BombData',
         '"Player":',
         '"BombInteraction":']
-
 
 
     # read the target log, find keywords and do stuff on match

@@ -18,7 +18,6 @@ general purpose bot for the spqr discord server and server monitor for the pavlo
   * mysql-connector
 
 ## todo (aside from finding and fixing bugs and improving the code in general)
-* add !genteams
 * get top ranks and write them to an updated message in #stats
 * extended playerstats (DM + TDM)
   * pull steamusers details
