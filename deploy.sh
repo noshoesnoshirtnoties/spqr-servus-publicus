@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=1.3.5
+VERSION=1.4.0
 SUBJECT=deploy
 USAGE="Usage: $0 -d dsthost -u sshuser -v\n
 -d destination host\n
@@ -60,11 +60,11 @@ FILES=(
   "config.json"
   "main.py"
   "bot.py"
-  "responses.py"
   "generate-ranks-cron.py"
   "generate-events-cron.py"
   "generate-reminder-cron.py"
   "spqr-servus-publicus.log"
+  "database_template.sql"
 )
 
 if [ ! -n "${DSTHOST}" ]; then

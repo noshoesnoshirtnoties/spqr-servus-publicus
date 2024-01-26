@@ -2,6 +2,7 @@ import bot
 import json
 
 if __name__ == '__main__':
+    # define env
     env='live'
 
     # read meta + config
