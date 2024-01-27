@@ -39,7 +39,6 @@ if __name__ == '__main__':
 
     @client.event
     async def on_ready():
-        #channelid=int(config['bot-channel-ids']['e-servus-publicus-bot'])
         channelid=int(config['bot-channel-ids']['g-matches'])
         channel=client.get_channel(channelid)
 

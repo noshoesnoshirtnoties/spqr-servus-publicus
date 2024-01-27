@@ -11,15 +11,18 @@
     "mysqluser":"mysqluser",
     "mysqlpass":"supersecretmysqlpassword",
     "guild-id":"1234567890123456789",
+    "senate-member":[
+      "1234678901234567890"
+    ],
     "senate-cmds":[
       "!writeas",
       "!unregister"
     ],
-    "senate-member":[
-      "1234678901234567890"
-    ],
     "bot-channel-ids":{
       "name-of-my-fancy-channel":"1234678901234567890"
+    },
+    "role-ids":{
+      "senate":"1234678901234567890"
     },
     "logfile_path":"/home/steam/pavlovserver/Pavlov/Saved/Logs/Pavlov.log"
   }

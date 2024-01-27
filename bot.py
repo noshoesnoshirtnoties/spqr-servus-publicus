@@ -652,7 +652,6 @@ def run_bot(meta,config):
                 if senatecmd==command:
                     logmsg('info','senate-cmd found')
                     if is_senate is not True:
-                        logmsg('warn','missing access rights for command: '+str(command))
                         access_granted=False
 
             if access_granted:
@@ -1116,7 +1115,8 @@ def run_bot(meta,config):
                             match_msg_id=user_message_split[1]
 
                             # get channel by id
-                            chnid=config['bot-channel-ids']['e-bot-commands']
+                            #chnid=config['bot-channel-ids']['g-matches']
+                            chnid=config['bot-channel-ids']['g-matches-test']
                             chn=await client.fetch_channel(chnid)
 
                             # get message by id
@@ -1176,36 +1176,28 @@ def run_bot(meta,config):
                                 players_ranked_sorted=dict(sorted(players_ranked.items(),key=operator.itemgetter(1),reverse=True))
                                 logmsg('debug','players_ranked_sorted: '+str(players_ranked_sorted))
 
+                                # generate 2 teams
                                 team1=[]
                                 team2=[]
                                 number=0
                                 for player in players_ranked_sorted:
                                     match number:
-                                        case 0:
-                                            team1.append(player)
-                                        case 1:
-                                            team2.append(player)
-                                        case 2:
-                                            team1.append(player)
-                                        case 3:
-                                            team2.append(player)
-                                        case 4:
-                                            team2.append(player)
-                                        case 5:
-                                            team1.append(player)
-                                        case 6:
-                                            team2.append(player)
-                                        case 7:
-                                            team1.append(player)
-                                        case 8:
-                                            team2.append(player)
-                                        case 9:
-                                            team1.append(player)
+                                        case 0: team1.append(player)
+                                        case 1: team2.append(player)
+                                        case 2: team1.append(player)
+                                        case 3: team2.append(player)
+                                        case 4: team2.append(player)
+                                        case 5: team1.append(player)
+                                        case 6: team2.append(player)
+                                        case 7: team1.append(player)
+                                        case 8: team2.append(player)
+                                        case 9: team1.append(player)
                                     number+=1
                                 
                                 logmsg('debug','team1: '+str(team1))
                                 logmsg('debug','team2: '+str(team2))
 
+                                # generate response message
                                 part_team1="team 1: "
                                 for player in team1:
                                     part_team1+="<@"+str(player)+"> "
@@ -1231,8 +1223,8 @@ def run_bot(meta,config):
                                 response='not enough players to generate teams - need 10'
                         else:
                             # missing parameters
-                            logmsg('warn','missing parameter')
-                            response='missing parameter - use !help for more info'
+                            logmsg('warn','missing parameter(s)')
+                            response='missing parameter(s) - use !help for more info'
             else: # access denied
                 logmsg('warn','missing access rights for command: '+str(command))
                 response='missing access rights for command: '+str(command)+' - use !help for more info'
