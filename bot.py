@@ -306,26 +306,21 @@ def run_bot(meta,config):
                 if int(avg_ping)>soft_limit:
                     kick_player=False
                     logmsg('warn','ping average ('+str(int(avg_ping))+') exceeds the soft limit ('+str(soft_limit)+')')
-                    await log_discord('e-bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') exceeds the soft limit ('+str(soft_limit)+') for player: '+str(steamusers_id))
                 else:
                     logmsg('info','ping average ('+str(int(avg_ping))+') is within soft limit ('+str(soft_limit)+')')
-                    await log_discord('e-bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') is within soft limit ('+str(soft_limit)+') for player: '+str(steamusers_id))
                 if int(avg_ping)>hard_limit:
                     kick_player=True
                     logmsg('warn','ping average ('+str(int(avg_ping))+') exceeds the hard limit ('+str(hard_limit)+')')
                     await log_discord('e-bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') exceeds the hard limit ('+str(hard_limit)+') for player: '+str(steamusers_id))
                 else:
                     logmsg('info','ping average ('+str(int(avg_ping))+') is within hard limit ('+str(hard_limit)+')')
-                    await log_discord('e-bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') is within hard limit ('+str(hard_limit)+') for player: '+str(steamusers_id))
 
                 # check players min-max-delta
                 if int(min_max_delta)>delta_limit:
                     kick_player=False
                     logmsg('warn','ping min-max-delta ('+str(int(min_max_delta))+') exceeds the delta limit ('+str(delta_limit)+')')
-                    await log_discord('e-bot-log','[server-monitor] ping min-max-delta ('+str(int(min_max_delta))+') exceeds the delta limit ('+str(delta_limit)+') for player: '+str(steamusers_id))
                 else:
                     logmsg('info','ping min-max-delta ('+str(int(min_max_delta))+') is within delta limit ('+str(delta_limit)+')')
-                    await log_discord('e-bot-log','[server-monitor] ping min-max-delta ('+str(int(min_max_delta))+') is within delta limit ('+str(delta_limit)+') for player: '+str(steamusers_id))
 
                 # kick unless canceled
                 if kick_player is True:
