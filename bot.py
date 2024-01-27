@@ -651,25 +651,33 @@ def run_bot(meta,config):
 
             if access_granted:
                 logmsg('info','access to command has been granted')
-                await log_discord('e-bot-log','[servus-publicus] command '+str(command)+' has been called by user '+str(message.author.name)+' ('+str(message.author.id)+')')
+                log_to_discord=False
                 match command:
                     case '!help':
+                        log_to_discord=True
                         response=Path('txt/help.txt').read_text()
                     case '!spqr':
+                        log_to_discord=True
                         response=Path('txt/spqr.txt').read_text()
                     case '!loremipsum':
+                        log_to_discord=True
                         response=Path('txt/loremipsum.txt').read_text()
                     case '!roles':
+                        log_to_discord=True
                         response=Path('txt/roles.txt').read_text()
                     case '!rules':
+                        log_to_discord=True
                         response=Path('txt/rules.txt').read_text()
                     case '!reqs':
+                        log_to_discord=True
                         response=Path('txt/requirements.txt').read_text()
                     case '!suntzu':
+                        log_to_discord=True
                         randomquote=random.choice(os.listdir('txt/suntzu'))
                         quotepath="txt/suntzu/"+randomquote
                         response=Path(str(quotepath)).read_text()
                     case '!serverinfo':
+                        log_to_discord=True
                         serverinfo=await get_serverinfo()
                         if serverinfo['Successful'] is True:
                             parts=[
@@ -689,6 +697,7 @@ def run_bot(meta,config):
                         else:
                             response=user_message+': something went wrong'
                     case '!maplist':
+                        log_to_discord=True
                         maplist=await rcon('MapList',{})
                         if maplist['Successful'] is True:
                             response=user_message+': successful'
@@ -698,6 +707,7 @@ def run_bot(meta,config):
                         else:
                             response=user_message+': something went wrong'
                     case '!playerlist':
+                        log_to_discord=True
                         inspectall=await rcon('InspectAll',{})
                         if inspectall['Successful'] is True:
                             response=user_message+': successful'
@@ -707,18 +717,21 @@ def run_bot(meta,config):
                         else:
                             response=user_message+': something went wrong'
                     case '!resetsnd':
+                        log_to_discord=True
                         resetsnd=await rcon('ResetSND',{})
                         if resetsnd['Successful'] is True:
                             response=user_message+' successful'
                         else:
                             response=user_message+' something went wrong'
                     case '!rotatemap':
+                        log_to_discord=True
                         rotatemap=await rcon('RotateMap',{})
                         if rotatemap['Successful'] is True:
                             response=user_message+' successful'
                         else:
                             response=user_message+' something went wrong'
                     case '!setmap':
+                        log_to_discord=True
                         rconparams={}
                         rconparams=get_rconparams_from_user_message(user_message)
                         if (len(rconparams))<1:
@@ -730,6 +743,7 @@ def run_bot(meta,config):
                             else:
                                 response=user_message+' something went wrong'
                     case '!setrandommap':
+                        log_to_discord=True
                         maplist=await rcon('MapList',{})
                         poolofrandommaps={}
                         i=0
@@ -748,6 +762,7 @@ def run_bot(meta,config):
                         else:
                             response=user_message+' something went wrong'
                     case '!kick':
+                        log_to_discord=True
                         rconparams={}
                         rconparams=get_rconparams_from_user_message(user_message)
                         if (len(rconparams))<1:
@@ -759,6 +774,7 @@ def run_bot(meta,config):
                             else:
                                 response=user_message+' something went wrong'
                     case '!ban':
+                        log_to_discord=True
                         rconparams={}
                         rconparams=get_rconparams_from_user_message(user_message)
                         if (len(rconparams))<1:
@@ -770,6 +786,7 @@ def run_bot(meta,config):
                             else:
                                 response=user_message+' something went wrong'
                     case '!unban':
+                        log_to_discord=True
                         rconparams={}
                         rconparams=get_rconparams_from_user_message(user_message)
                         if (len(rconparams))<1:
@@ -781,6 +798,7 @@ def run_bot(meta,config):
                             else:
                                 response=user_message+' something went wrong'
                     case '!modlist':
+                        log_to_discord=True
                         modlist=await rcon('ModeratorList',{})
                         if modlist['Successful'] is True:
                             response=user_message+': successful'
@@ -790,6 +808,7 @@ def run_bot(meta,config):
                         else:
                             response=user_message+': something went wrong'
                     case '!blacklist':
+                        log_to_discord=True
                         banlist=await rcon('Banlist',{})
                         if banlist['Successful'] is True:
                             response=user_message+': successful'
@@ -799,6 +818,7 @@ def run_bot(meta,config):
                         else:
                             response=user_message+': something went wrong'
                     case '!pings':
+                        log_to_discord=True
                         inspectall=await rcon('InspectAll',{})
                         if inspectall['Successful'] is True:
                             response=user_message+': successful'
@@ -822,6 +842,7 @@ def run_bot(meta,config):
                         else:
                             response=user_message+': something went wrong'
                     case '!echo':
+                        log_to_discord=True
                         if paramsgiven: # requires 1 param
                             echo_user_message_split0=user_message.split(' ',2)
                             echo_command=echo_user_message_split0[0]
@@ -832,6 +853,7 @@ def run_bot(meta,config):
                             logmsg('warn','missing parameters')
                             response='missing parameters - use !help for more info'
                     case '!writeas':
+                        log_to_discord=True
                         if len(user_message_split)>=3: # requires 2 params
                             wa_user_message_split0=user_message.split(' ',3)
                             wa_command=wa_user_message_split0[0]
@@ -850,6 +872,7 @@ def run_bot(meta,config):
                             logmsg('warn','missing parameters')
                             response='missing parameters - use !help for more info'
                     case '!register':
+                        log_to_discord=True
                         if paramsgiven:
                             user_message_split=user_message.split(' ',2)
                             steamid64=user_message_split[1]
@@ -949,6 +972,7 @@ def run_bot(meta,config):
                             logmsg('warn','missing parameter')
                             response='missing parameter - use !help for more info'
                     case '!unregister':
+                        log_to_discord=True
                         if paramsgiven:
                             user_message_split=user_message.split(' ',2)
                             db_param=user_message_split[1]
@@ -980,6 +1004,7 @@ def run_bot(meta,config):
                             logmsg('warn','missing parameter')
                             response='missing parameter - use !help for more info'
                     case '!getstats':
+                        log_to_discord=True
                         discordid=str(message.author.id)
 
                         # get id from discordusers db
@@ -1059,6 +1084,7 @@ def run_bot(meta,config):
                                 for part in parts:
                                     response=response+'\n'+part
                     case '!getrank':
+                        log_to_discord=True
                         discordid=str(message.author.id)
 
                         # get id from discordusers db
@@ -1220,6 +1246,8 @@ def run_bot(meta,config):
                             # missing parameters
                             logmsg('warn','missing parameter(s)')
                             response='missing parameter(s) - use !help for more info'
+                if log_to_discord:
+                    await log_discord('e-bot-log','[servus-publicus] command '+str(command)+' has been called by user '+str(message.author.name)+' ('+str(message.author.id)+')')
             else: # access denied
                 logmsg('warn','missing access rights for command: '+str(command))
                 response='missing access rights for command: '+str(command)+' - use !help for more info'
