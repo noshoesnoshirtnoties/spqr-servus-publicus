@@ -1131,6 +1131,7 @@ def run_bot(meta,config):
                                 for part in parts:
                                     response=response+'\n'+part
                     case '!genteams':
+                        log_to_discord=True
                         if paramsgiven:
                             user_message_split=user_message.split(' ',2)
                             match_msg_id=user_message_split[1]
