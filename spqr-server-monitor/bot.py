@@ -452,8 +452,6 @@ def run_bot(meta,config):
                     gamemode0=line.split('game=',1)
                     gamemode=gamemode0[1]
                     logmsg('info','vrankrupt map is loading: '+str(mapugc).strip()+' as '+str(gamemode).strip())
-            case 'Updating blacklist':
-                logmsg('info','access configs reloaded')
             case 'PavlovLog: StartPlay':
                 logmsg('info','map started')
             case '"State":':
@@ -473,39 +471,17 @@ def run_bot(meta,config):
                         asyncio.run(action_pullstats())
             case 'Preparing to exit':
                 logmsg('info','server is shutting down')
-                log_to_discord('[server-monitor] server is shutting down')
             case 'LogHAL':
                 logmsg('info','server is starting up')
             case 'Server Status Helper':
                 logmsg('info','server is now online')
-            case 'Rcon: User':
-                rconclient0=line.split(' authenticated ',2)
-                if len(rconclient0)>1:
-                    rconclient=rconclient0[1]
-                else:
-                    rconclient=rconclient0[0]
-                logmsg('debug','rcon client auth: '+str(rconclient).strip())
-            case 'SND: Waiting for players':
-                logmsg('info','waiting for players')
-            case 'long time between ticks':
-                logmsg('warn','long tick detected')
-            case 'Login request':
-                loginuser0=line.split(' ?Name=',2)
-                loginuser1=loginuser0[1].split('?',2)
-                loginuser=loginuser1[0]
-                loginid0=line.split('NULL:',2)
-                loginid1=loginid0[1].split(' ',2)
-                loginid=loginid1[0]
-                logmsg('info','login request from user: '+str(loginuser).strip()+' ('+str(loginid).strip()+')')
-            case 'Client netspeed':
-                netspeed0=line.split('Client netspeed is ',2)
-                netspeed=netspeed0[1]
-                logmsg('debug','client netspeed: '+str(netspeed).strip())
-            case 'Join request':
-                joinuser0=line.split('?name=',2)
-                joinuser1=joinuser0[1].split('?',2)
-                joinuser=joinuser1[0]
-                logmsg('info','join request from user: '+str(joinuser).strip())
+            #case 'Rcon: User':
+            #    rconclient0=line.split(' authenticated ',2)
+            #    if len(rconclient0)>1:
+            #        rconclient=rconclient0[1]
+            #    else:
+            #        rconclient=rconclient0[0]
+            #    logmsg('debug','rcon client auth: '+str(rconclient).strip())
             case 'Join succeeded':
                 joinuser0=line.split('succeeded: ',2)
                 joinuser=joinuser0[1]
@@ -517,37 +493,11 @@ def run_bot(meta,config):
                 leaveuser1=leaveuser0[1].split(',',2)
                 leaveuser=leaveuser1[0]
                 logmsg('info','user left the server: '+str(leaveuser).strip())
-                log_to_discord('[server-monitor] user left the server: '+str('IP_REMOVED').strip())
+                log_to_discord('[server-monitor] user left the server: IP_REMOVED')
                 asyncio.run(action_autopin())
             case '"KillData":':
                 logmsg('info','a player died...')
                 asyncio.run(action_autokickhighping())
-            case '"Killer":':
-                killer0=line.split('"',4)
-                killer=killer0[3]
-                logmsg('info','killer: '+str(killer).strip())
-            case '"KillerTeamID":':
-                killerteamid0=line.split('": ',2)
-                killerteamid1=killerteamid0[1].split(',',2)
-                killerteamid=killerteamid1[0]
-                logmsg('info','killerteamid: '+str(killerteamid).strip())
-            case '"Killed":':
-                killed0=line.split('"',4)
-                killed=killed0[3]
-                logmsg('info','killed: '+str(killed).strip())
-            case '"KilledTeamID":':
-                killedteamid0=line.split('": ',2)
-                killedteamid1=killedteamid0[1].split(',',2)
-                killedteamid=killedteamid1[0]
-                logmsg('info','killedteamid: '+str(killedteamid).strip())
-            case '"KilledBy":':
-                killedby0=line.split('"',4)
-                killedby=killedby0[3]
-                logmsg('info','killedby: '+str(killedby).strip())
-            case '"Headshot":':
-                headshot0=line.split('": ',2)
-                headshot=headshot0[1]
-                logmsg('info','headhot: '+str(headshot).strip())
             case 'LogTemp: Rcon: KickPlayer':
                 kickplayer0=line.split('KickPlayer ',2)
                 kickplayer=kickplayer0[1]
@@ -558,18 +508,6 @@ def run_bot(meta,config):
                 banplayer=banplayer0[1]
                 logmsg('info','player banned: '+str(banplayer).strip())
                 log_to_discord('[server-monitor] user '+str(banplayer).strip()+' has been banned')
-            case 'BombData':
-                logmsg('info','something happened with the bomb')
-            case '"Player":':
-                bombplayer0=line.split('": "',2)
-                bombplayer1=bombplayer0[1].split('"',2)
-                bombplayer=bombplayer1[0]
-                logmsg('info','player interacted with bomb: '+str(bombplayer).strip())
-            case '"BombInteraction":':
-                bombinteraction0=line.split('": "',2)
-                bombinteraction1=bombinteraction0[1].split('"',2)
-                bombinteraction=bombinteraction1[0]
-                logmsg('info','bomb interaction: '+ str(bombinteraction).strip())
 
 
     # function: find relevant keywords in target log
@@ -611,31 +549,16 @@ def run_bot(meta,config):
             found_keyword=find_keyword_in_line(line,keywords=[
                 'Rotating map',
                 'LogLoad: LoadMap',
-                'Updating blacklist'
                 'StartPlay',
                 '"State":',
                 'Preparing to exit',
                 'LogHAL',
                 'Server Status Helper',
                 'Rcon: User',
-                'SND: Waiting for players',
-                'long time between ticks',
-                'Login request',
-                'Client netspeed',
-                'Join request',
                 'Join succeeded',
                 'LogNet: UChannel::Close',
-                '"Killer":',
                 '"KillData":',
-                '"KillerTeamID":',
-                '"Killed":',
-                '"KilledTeamID":',
-                '"KilledBy":',
-                '"Headshot":',
                 'LogTemp: Rcon: KickPlayer',
-                'LogTemp: Rcon: BanPlayer',
-                'BombData',
-                '"Player":',
-                '"BombInteraction":'])
+                'LogTemp: Rcon: BanPlayer'])
             if found_keyword!='':
                 process_found_keyword(line,found_keyword)
