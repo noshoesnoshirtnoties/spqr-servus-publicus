@@ -473,7 +473,7 @@ def run_bot(meta,config):
                         asyncio.run(action_pullstats())
             case 'Preparing to exit':
                 logmsg('info','server is shutting down')
-                asyncio.run(('[server-monitor] server is shutting down'))
+                log_to_discord('[server-monitor] server is shutting down')
             case 'LogHAL':
                 logmsg('info','server is starting up')
             case 'Server Status Helper':
@@ -560,7 +560,6 @@ def run_bot(meta,config):
                 log_to_discord('[server-monitor] user '+str(banplayer).strip()+' has been banned')
             case 'BombData':
                 logmsg('info','something happened with the bomb')
-                asyncio.run(action_autokickhighping())
             case '"Player":':
                 bombplayer0=line.split('": "',2)
                 bombplayer1=bombplayer0[1].split('"',2)
