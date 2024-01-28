@@ -55,7 +55,7 @@ def run_bot(meta,config):
 
         @client.event
         async def on_ready():
-            channel=client.get_channel(int(config['bot-channel-ids']['e-bot-test']))
+            channel=client.get_channel(int(config['bot-channel-ids']['e-bot-log']))
             try:
                 await channel.send(message)
             except Exception as e:

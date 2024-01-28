@@ -55,8 +55,7 @@ def run_bot(meta,config):
     # function: log to discord
     async def log_discord(message):
         logmsg('debug','log_discord called')
-        #channel=client.get_channel(int(config['bot-channel-ids'][channel]))
-        channel=client.get_channel(int(config['bot-channel-ids']['e-bot-test']))
+        channel=client.get_channel(int(config['bot-channel-ids']['e-bot-log']))
         try:
             await channel.send(message)
         except Exception as e:
