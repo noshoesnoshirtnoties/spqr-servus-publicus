@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=2.0.0
+VERSION=2.0.1
 SUBJECT=deploy
 USAGE="Usage: $0 -d dsthost -u sshuser -v\n
 -d destination host\n
@@ -154,7 +154,7 @@ do
 
   if [ $VERBOSE ]; then echo "[INFO] starting the systemd service"; fi
   $SSH $DSTHOST "/usr/bin/systemctl start ${SERVICE}.service"
-  sleep 3
+  sleep 2
   $SSH $DSTHOST "/usr/bin/systemctl status ${SERVICE}.service | grep 'Active:'"
 done
 

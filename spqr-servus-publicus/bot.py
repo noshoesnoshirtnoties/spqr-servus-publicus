@@ -25,7 +25,7 @@ def run_bot(meta,config):
     logging.basicConfig(
         filename='../spqr-servus-publicus.log',
         filemode='a',
-        format='%(asctime)s,%(msecs)d [%(levelname)s] spqr-sp: %(message)s',
+        format='%(asctime)s,%(msecs)d [%(levelname)s] %(message)s',
         datefmt='%m/%d/%Y %H:%M:%S',
         level=level)
     logfile=logging.getLogger('logfile')
@@ -53,17 +53,12 @@ def run_bot(meta,config):
 
 
     # function: log to discord
-    async def log_discord(channel,message):
+    async def log_discord(message):
         logmsg('debug','log_discord called')
-
-        target_message=message
-        target_channel_id=config['bot-channel-ids'][channel]
-        target_channel=client.get_channel(int(target_channel_id))
-        logmsg('debug','target_message: '+str(target_message))
-        logmsg('debug','target_channel: '+str(target_channel_id))
-        logmsg('debug','target_channel: '+str(target_channel))
+        #channel=client.get_channel(int(config['bot-channel-ids'][channel]))
+        channel=client.get_channel(int(config['bot-channel-ids']['e-bot-test']))
         try:
-            await target_channel.send(target_message)
+            await channel.send(message)
         except Exception as e:
             logmsg('debug',str(e))
 
@@ -750,7 +745,7 @@ def run_bot(meta,config):
                             logmsg('warn','missing parameter(s)')
                             response='missing parameter(s) - use !help for more info'
                 if log_to_discord:
-                    await log_discord('e-bot-log','[servus-publicus] command '+str(command)+' has been called by user '+str(message.author.name)+' ('+str(message.author.id)+')')
+                    await log_discord('[servus-publicus] command '+str(command)+' has been called by user '+str(message.author.name)+' ('+str(message.author.id)+')')
             else: # access denied
                 logmsg('warn','missing access rights for command: '+str(command))
                 response='missing access rights for command: '+str(command)+' - use !help for more info'

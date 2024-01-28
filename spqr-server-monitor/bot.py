@@ -25,17 +25,10 @@ def run_bot(meta,config):
     logging.basicConfig(
         filename='../spqr-server-monitor.log',
         filemode='a',
-        format='%(asctime)s,%(msecs)d [%(levelname)s] spqr-sp: %(message)s',
+        format='%(asctime)s,%(msecs)d [%(levelname)s] %(message)s',
         datefmt='%m/%d/%Y %H:%M:%S',
         level=level)
     logfile=logging.getLogger('logfile')
-
-
-    # init discord
-    intents=discord.Intents.default()
-    intents.message_content=True
-    intents.members=True
-    client=discord.Client(intents=intents)
 
 
     # function: log to file
@@ -51,21 +44,25 @@ def run_bot(meta,config):
             case _:
                 logfile.debug(msg)
 
-
+        
     # function: log to discord
-    async def log_discord(channel,message):
-        logmsg('debug','log_discord called')
+    def log_to_discord(message):
+        logmsg('debug','log_to_discord called')
 
-        target_message=message
-        target_channel_id=config['bot-channel-ids'][channel]
-        target_channel=client.get_channel(int(target_channel_id))
-        logmsg('debug','target_message: '+str(target_message))
-        logmsg('debug','target_channel: '+str(target_channel_id))
-        logmsg('debug','target_channel: '+str(target_channel))
-        try:
-            await target_channel.send(target_message)
-        except Exception as e:
-            logmsg('debug',str(e))
+        intents=discord.Intents.default()
+        intents.message_content=True
+        client=discord.Client(intents=intents)
+
+        @client.event
+        async def on_ready():
+            channel=client.get_channel(int(config['bot-channel-ids']['e-bot-test']))
+            try:
+                await channel.send(message)
+            except Exception as e:
+                logmsg('debug',str(e))
+            await client.close()
+
+        client.run(config['bot_token'])
 
 
     # function: query database
@@ -161,7 +158,7 @@ def run_bot(meta,config):
             data['ServerInfo']=False
         return data
 
-
+        
     # function: action: retrieve and output serverinfo
     async def action_serverinfo():
         logmsg('debug','action_serverinfo called')
@@ -208,13 +205,11 @@ def run_bot(meta,config):
                     command='SetPin'
                     params={'9678'}
                     data=await rcon(command,params)
-                    await log_discord('e-bot-log','[server-monitor] server pin has been set')
                 else:
                     logmsg('debug','below limit ('+str(limit)+') - removing pin')
                     command='SetPin'
                     params={''}
                     data=await rcon(command,params)
-                    await log_discord('e-bot-log','[server-monitor] server pin has been removed')
             else:
                 logmsg('warn','cant complete auto-pin because map is rotating')
         else:
@@ -298,7 +293,6 @@ def run_bot(meta,config):
                 if int(avg_ping)>hard_limit:
                     kick_player=True
                     logmsg('warn','ping average ('+str(int(avg_ping))+') exceeds the hard limit ('+str(hard_limit)+')')
-                    await log_discord('e-bot-log','[server-monitor] ping average ('+str(int(avg_ping))+') exceeds the hard limit ('+str(hard_limit)+') for player: '+str(steamusers_id))
                 else:
                     logmsg('info','ping average ('+str(int(avg_ping))+') is within hard limit ('+str(hard_limit)+')')
 
@@ -314,7 +308,6 @@ def run_bot(meta,config):
                     if act_on_breach is True:
                         await rcon('Kick',{steamusers_id})
                         logmsg('warn','player ('+str(steamusers_id)+') has been kicked by autokick-highping')
-                        await log_discord('e-bot-log','[server-monitor] player ('+str(steamusers_id)+') has been kicked by autokick-highping')
                         delete_data=True
                     else:
                         logmsg('warn','player ('+str(steamusers_id)+') would have been kicked by autokick-highping, but this got canceled')
@@ -425,7 +418,6 @@ def run_bot(meta,config):
                         dbquery(query,values)
 
                     logmsg('info','processed all current players')
-                    await log_discord('e-bot-log','[server-monitor] stats have been pulled and processed for all current players')
                 else:
                     logmsg('warn','not pulling stats because gamemode is not SND')
             else:
@@ -481,6 +473,7 @@ def run_bot(meta,config):
                         asyncio.run(action_pullstats())
             case 'Preparing to exit':
                 logmsg('info','server is shutting down')
+                asyncio.run(('[server-monitor] server is shutting down'))
             case 'LogHAL':
                 logmsg('info','server is starting up')
             case 'Server Status Helper':
@@ -517,16 +510,18 @@ def run_bot(meta,config):
                 joinuser0=line.split('succeeded: ',2)
                 joinuser=joinuser0[1]
                 logmsg('info','join successful for user: '+str(joinuser).strip())
+                log_to_discord('[server-monitor] join successful for user: '+str(joinuser).strip())
                 asyncio.run(action_autopin())
             case 'LogNet: UChannel::Close':
                 leaveuser0=line.split('RemoteAddr: ',2)
                 leaveuser1=leaveuser0[1].split(',',2)
                 leaveuser=leaveuser1[0]
                 logmsg('info','user left the server: '+str(leaveuser).strip())
+                log_to_discord('[server-monitor] user left the server: '+str('IP_REMOVED').strip())
                 asyncio.run(action_autopin())
             case '"KillData":':
-                logmsg(logfile,'info','a player died...')
-                #asyncio.run(action_autokickhighping())
+                logmsg('info','a player died...')
+                asyncio.run(action_autokickhighping())
             case '"Killer":':
                 killer0=line.split('"',4)
                 killer=killer0[3]
@@ -557,15 +552,15 @@ def run_bot(meta,config):
                 kickplayer0=line.split('KickPlayer ',2)
                 kickplayer=kickplayer0[1]
                 logmsg('info','player kicked: '+str(kickplayer).strip())
-                log_discord('e-bot-log','[server-monitor] user '+str(kickplayer).strip()+' has been kicked')
+                log_to_discord('[server-monitor] user '+str(kickplayer).strip()+' has been kicked')
             case 'LogTemp: Rcon: BanPlayer':
                 banplayer0=line.split('BanPlayer ',2)
                 banplayer=banplayer0[1]
                 logmsg('info','player banned: '+str(banplayer).strip())
-                log_discord('e-bot-log','[server-monitor] user '+str(banplayer).strip()+' has been banned')
+                log_to_discord('[server-monitor] user '+str(banplayer).strip()+' has been banned')
             case 'BombData':
                 logmsg('info','something happened with the bomb')
-                #asyncio.run(action_autokickhighping())
+                asyncio.run(action_autokickhighping())
             case '"Player":':
                 bombplayer0=line.split('": "',2)
                 bombplayer1=bombplayer0[1].split('"',2)
@@ -608,53 +603,40 @@ def run_bot(meta,config):
                     yield line
 
 
-    # keywords for target log
-    keywords=[
-        'Rotating map',
-        'LogLoad: LoadMap',
-        'Updating blacklist'
-        'StartPlay',
-        '"State":',
-        'Preparing to exit',
-        'LogHAL',
-        'Server Status Helper',
-        'Rcon: User',
-        'SND: Waiting for players',
-        'long time between ticks',
-        'Login request',
-        'Client netspeed',
-        'Join request',
-        'Join succeeded',
-        'LogNet: UChannel::Close',
-        '"Killer":',
-        '"KillData":',
-        '"KillerTeamID":',
-        '"Killed":',
-        '"KilledTeamID":',
-        '"KilledBy":',
-        '"Headshot":',
-        'LogTemp: Rcon: KickPlayer',
-        'LogTemp: Rcon: BanPlayer',
-        'BombData',
-        '"Player":',
-        '"BombInteraction":']
-
-
     # read the target log, find keywords and do stuff on match
-    logmsg('info','starting to read from the target log file...')
+    logmsg('info',str(meta['name'])+' '+str(meta['version'])+' is now running')
+    log_to_discord('[server-monitor] server-monitor is now active')
     loglines=follow_log(config['logfile_path'])
     for line in loglines:
         if line!="":
-            found_keyword=find_keyword_in_line(line,keywords)
+            found_keyword=find_keyword_in_line(line,keywords=[
+                'Rotating map',
+                'LogLoad: LoadMap',
+                'Updating blacklist'
+                'StartPlay',
+                '"State":',
+                'Preparing to exit',
+                'LogHAL',
+                'Server Status Helper',
+                'Rcon: User',
+                'SND: Waiting for players',
+                'long time between ticks',
+                'Login request',
+                'Client netspeed',
+                'Join request',
+                'Join succeeded',
+                'LogNet: UChannel::Close',
+                '"Killer":',
+                '"KillData":',
+                '"KillerTeamID":',
+                '"Killed":',
+                '"KilledTeamID":',
+                '"KilledBy":',
+                '"Headshot":',
+                'LogTemp: Rcon: KickPlayer',
+                'LogTemp: Rcon: BanPlayer',
+                'BombData',
+                '"Player":',
+                '"BombInteraction":'])
             if found_keyword!='':
                 process_found_keyword(line,found_keyword)
-
-
-    # event: discord bot ready
-    @client.event
-    async def on_ready():
-        logmsg('info',str(meta['name'])+' '+str(meta['version'])+' is now running')
-
-
-    # run discord client
-    client.run(config['bot_token'])
