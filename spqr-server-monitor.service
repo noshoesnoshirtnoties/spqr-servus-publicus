@@ -1,9 +1,9 @@
 [Unit]
-Description=spqr-servus-publicus
+Description=spqr-server-monitor
 
 [Service]
 Type=simple
-WorkingDirectory=/home/steam/spqr/spqr-servus-publicus
+WorkingDirectory=/home/steam/spqr/spqr-server-monitor
 ExecStart=/usr/bin/python3 main.py
 RestartSec=1
 Restart=always

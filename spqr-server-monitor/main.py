@@ -7,7 +7,7 @@ if __name__ == '__main__':
 
     # read meta + config
     meta=json.loads(open('meta.json').read())
-    config=json.loads(open('config.json').read())[env]
+    config=json.loads(open('../config.json').read())[env]
 
     # run
     bot.run_bot(meta,config)
