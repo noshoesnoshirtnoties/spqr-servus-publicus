@@ -486,14 +486,14 @@ def run_bot(meta,config):
                 joinuser0=line.split('succeeded: ',2)
                 joinuser=joinuser0[1]
                 logmsg('info','join successful for user: '+str(joinuser).strip())
-                log_to_discord('[server-monitor] join successful for user: '+str(joinuser).strip())
+                log_to_discord('[server-monitor] user joined successfully: '+str(joinuser).strip())
                 asyncio.run(action_autopin())
             case 'LogNet: UChannel::Close':
                 leaveuser0=line.split('RemoteAddr: ',2)
                 leaveuser1=leaveuser0[1].split(',',2)
                 leaveuser=leaveuser1[0]
                 logmsg('info','user left the server: '+str(leaveuser).strip())
-                log_to_discord('[server-monitor] user left the server: IP_REMOVED')
+                log_to_discord('[server-monitor] user left the server')
                 asyncio.run(action_autopin())
             case '"KillData":':
                 logmsg('info','a player died...')
@@ -502,12 +502,12 @@ def run_bot(meta,config):
                 kickplayer0=line.split('KickPlayer ',2)
                 kickplayer=kickplayer0[1]
                 logmsg('info','player kicked: '+str(kickplayer).strip())
-                log_to_discord('[server-monitor] user '+str(kickplayer).strip()+' has been kicked')
+                log_to_discord('[server-monitor] user has been kicked (unless its a mod): '+str(kickplayer).strip())
             case 'LogTemp: Rcon: BanPlayer':
                 banplayer0=line.split('BanPlayer ',2)
                 banplayer=banplayer0[1]
                 logmsg('info','player banned: '+str(banplayer).strip())
-                log_to_discord('[server-monitor] user '+str(banplayer).strip()+' has been banned')
+                log_to_discord('[server-monitor] user has been banned (unless its a mod): '+str(banplayer).strip())
 
 
     # function: find relevant keywords in target log
