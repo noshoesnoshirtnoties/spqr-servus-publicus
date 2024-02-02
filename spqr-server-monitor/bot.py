@@ -502,12 +502,12 @@ def run_bot(meta,config):
                 kickplayer0=line.split('KickPlayer ',2)
                 kickplayer=kickplayer0[1]
                 logmsg('info','player kicked: '+str(kickplayer).strip())
-                log_to_discord('[server-monitor] user has been kicked (unless its a mod): '+str(kickplayer).strip())
+                log_to_discord('[server-monitor] user has been kicked: '+str(kickplayer).strip())
             case 'LogTemp: Rcon: BanPlayer':
                 banplayer0=line.split('BanPlayer ',2)
                 banplayer=banplayer0[1]
                 logmsg('info','player banned: '+str(banplayer).strip())
-                log_to_discord('[server-monitor] user has been banned (unless its a mod): '+str(banplayer).strip())
+                log_to_discord('[server-monitor] user has been banned: '+str(banplayer).strip())
 
 
     # function: find relevant keywords in target log
