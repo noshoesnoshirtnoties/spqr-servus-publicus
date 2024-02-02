@@ -24,6 +24,10 @@
     "role-ids":{
       "senate":"1234678901234567890"
     },
-    "logfile_path":"/home/steam/pavlovserver/Pavlov/Saved/Logs/Pavlov.log"
+    "logfile_path":"/home/steam/pavlovserver/Pavlov/Saved/Logs/Pavlov.log",
+    "autopin_limit_default":9,
+    "autopin_limit_tdm":5,
+    "autopin_limit_dm":5,
+    "autopin_pin":"1234"
   }
 }

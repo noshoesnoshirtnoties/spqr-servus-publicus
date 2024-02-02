@@ -192,18 +192,18 @@ def run_bot(meta,config):
 
             # unless during rotation, set playercount limit depending on gamemode
             if serverinfo['ServerInfo']['RoundState']!='Rotating':
-                limit=8
+                limit=config['autopin_limit_default']
                 if serverinfo['ServerInfo']['GameMode']=="TDM":
-                    limit=8
+                    limit=config['autopin_limit_tdm']
                 elif serverinfo['ServerInfo']['GameMode']=="DM":
-                    limit=4
+                    limit=config['autopin_limit_snd']
 
                 # decide wether to set the pin or remove it
                 playercount_split=serverinfo['ServerInfo']['PlayerCount'].split('/',2)
                 if (int(playercount_split[0]))>=limit:
-                    logmsg('debug','limit ('+str(limit)+') reached - setting pin 9678')
+                    logmsg('debug','limit ('+str(limit)+') reached - setting pin '+str(config['autopin_pin'])+'')
                     command='SetPin'
-                    params={'9678'}
+                    params={config['autopin_pin']}
                     data=await rcon(command,params)
                 else:
                     logmsg('debug','below limit ('+str(limit)+') - removing pin')
