@@ -196,7 +196,7 @@ def run_bot(meta,config):
                 if serverinfo['ServerInfo']['GameMode']=="TDM":
                     limit=8
                 elif serverinfo['ServerInfo']['GameMode']=="DM":
-                    limit=6
+                    limit=4
 
                 # decide wether to set the pin or remove it
                 playercount_split=serverinfo['ServerInfo']['PlayerCount'].split('/',2)
