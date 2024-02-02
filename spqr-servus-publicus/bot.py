@@ -104,6 +104,58 @@ def run_bot(meta,config):
         return data
 
 
+    # function: get wrapper for rcon serverinfo
+    async def get_serverinfo():
+        logmsg('debug','get_serverinfo called')
+
+        # get the serverinfo data
+        data=await rcon('ServerInfo',{})
+
+        if data['Successful'] is True:
+            # unless during rotation, analyze and if necessary modify serverinfo before returning it
+            if data['ServerInfo']['RoundState']!='Rotating':
+                new_serverinfo=data['ServerInfo']
+
+                # make sure gamemode is uppercase
+                new_serverinfo['GameMode']=new_serverinfo['GameMode'].upper()
+
+                # demo rec counts as 1 player in SND
+                if new_serverinfo['GameMode']=="SND":
+                    numberofplayers0=new_serverinfo['PlayerCount'].split('/',2)
+                    numberofplayers1=numberofplayers0[0]
+                    if int(numberofplayers1)>0: # demo only exists if there is players
+                        numberofplayers2=(int(numberofplayers1)-1)
+                    else:
+                        numberofplayers2=(numberofplayers0[0])
+                    maxplayers=numberofplayers0[1]
+                    numberofplayers=str(numberofplayers2)+'/'+str(maxplayers)
+                else:
+                    numberofplayers=new_serverinfo['PlayerCount']
+                new_serverinfo['PlayerCount']=numberofplayers
+
+                # for SND get info if match has ended and which team won
+                new_serverinfo['MatchEnded']=False
+                new_serverinfo['WinningTeam']='none'
+                if new_serverinfo['GameMode']=="SND" and new_serverinfo['Teams'] is True:
+                    if int(new_serverinfo['Team0Score'])==10:
+                        new_serverinfo['MatchEnded']=True
+                        new_serverinfo['WinningTeam']='team0'
+                    elif int(new_serverinfo['Team1Score'])==10:
+                        new_serverinfo['MatchEnded']=True
+                        new_serverinfo['WinningTeam']='team1'
+                else:
+                    new_serverinfo['Team0Score']=0
+                    new_serverinfo['Team1Score']=0
+                
+                data['ServerInfo']=new_serverinfo
+            else:
+                data['Successful']=False
+                data['ServerInfo']=False
+        else:
+            data['ServerInfo']=False
+        return data
+
+
     # function: wrapper to retrieve all params from full message
     def get_rconparams_from_user_message(user_message):
         maxnumparams=3
