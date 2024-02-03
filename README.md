@@ -19,6 +19,9 @@ spqr-server-monitor.service provides services around the game server.
   * async-pavlov
   * mysql-connector
 
+## known issues
+* discord conn dies in server-monitor: discord.errors.ConnectionClosed: Shard ID None WebSocket closed with 1000
+
 ## todo
 ### spqr-servus-publicus
 * use map aliases in output of !maplist
