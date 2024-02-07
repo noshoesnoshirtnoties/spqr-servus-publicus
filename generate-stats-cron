@@ -6,4 +6,4 @@
 #| | | | |
 #* * * * *
 
-0 * * * * spqr cd /home/spqr/spqr-servus-publicus/ && python3 /home/spqr/spqr-servus-publicus/generate-stats-cron.py >/dev/null 2>&1
+0 * * * * steam cd /home/spqr/spqr-servus-publicus/ && python3 /home/spqr/spqr-servus-publicus/generate-stats-cron.py >/dev/null 2>&1

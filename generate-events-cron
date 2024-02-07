@@ -6,4 +6,4 @@
 #| | | | |
 #* * * * *
 
-0 3 * * 7 spqr cd /home/spqr/spqr-servus-publicus/ && python3 /home/spqr/spqr-servus-publicus/generate-events-cron.py >/dev/null 2>&1
+0 3 * * 7 steam cd /home/spqr/spqr-servus-publicus/ && python3 /home/spqr/spqr-servus-publicus/generate-events-cron.py >/dev/null 2>&1
