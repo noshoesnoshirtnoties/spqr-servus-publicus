@@ -6,4 +6,4 @@
 #| | | | |
 #* * * * *
 
-0 12 * * 1 steam cd /home/spqr/spqr-servus-publicus/ && python3 /home/spqr/spqr-servus-publicus/generate-reminder-cron.py >/dev/null 2>&1
+0 12 * * 1 steam cd /home/steam/spqr/ && python3 /home/steam/spqr/generate-reminder-cron.py >/dev/null 2>&1

@@ -6,4 +6,4 @@
 #| | | | |
 #* * * * *
 
-10 * * * * steam cd /home/spqr/spqr-servus-publicus/ && python3 /home/spqr/spqr-servus-publicus/generate-ranks-cron.py >/dev/null 2>&1
+10 * * * * steam cd /home/steam/spqr/ && python3 /home/steam/spqr/generate-ranks-cron.py >/dev/null 2>&1
