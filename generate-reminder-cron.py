@@ -20,9 +20,9 @@ if __name__ == '__main__':
         channelid=config['bot-channel-ids']['news']
         channel=client.get_channel(int(channelid))
 
-        # get random quote
-        randomquote=random.choice(os.listdir('txt/suntzu'))
-        quotepath="txt/suntzu/"+randomquote
+        # get random quote 
+        randomquote=random.choice(os.listdir('spqr-servus-publicus/txt/suntzu'))
+        quotepath="spqr-servus-publicus/txt/suntzu/"+randomquote
         quote=Path(str(quotepath)).read_text()
 
         gladiator=config['role-ids']['gladiator']
