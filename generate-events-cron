@@ -6,4 +6,4 @@
 #| | | | |
 #* * * * *
 
-0 3 * * 7 steam cd /home/steam/spqr/ && python3 /home/steam/spqr/generate-events-cron.py >/dev/null 2>&1
+#0 3 * * 7 steam cd /home/steam/spqr/ && python3 /home/steam/spqr/generate-events-cron.py >/dev/null 2>&1

@@ -6,4 +6,4 @@
 #| | | | |
 #* * * * *
 
-0 * * * * steam cd /home/steam/spqr/ && python3 /home/steam/spqr/generate-stats-cron.py >/dev/null 2>&1
+#0 * * * * steam cd /home/steam/spqr/ && python3 /home/steam/spqr/generate-stats-cron.py >/dev/null 2>&1
