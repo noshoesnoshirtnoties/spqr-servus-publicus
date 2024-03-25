@@ -1,9 +1,9 @@
-/home/spqr/spqr-servus-publicus/spqr-server-monitor.log {
+/home/steam/spqr-servus-publicus/spqr-server-monitor.log {
   daily
   missingok
   rotate 7
   compress
   delaycompress
   notifempty
-  create 0640 spqr spqr
+  create 0640 steam steam
 }
